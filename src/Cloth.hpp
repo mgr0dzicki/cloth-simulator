@@ -9,13 +9,23 @@ class Node {
  public:
   Node() = default;
   Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0));
-  glm::vec3 getPosition();
   void update(float dt, float prevDt);
   void constrainBall(glm::vec3 center, float radius);
 
- private:
   glm::vec3 position;
+
+ private:
   glm::vec3 prevPosition;
+};
+
+class Link {
+  public:
+    Link(Node *a, Node *b);
+    void update();
+
+  private:
+    Node *a, *b;
+    float length;
 };
 
 class Cloth {
@@ -26,6 +36,7 @@ class Cloth {
 
  private:
   std::vector<std::vector<Node>> nodes;
+  std::vector<Link> links;
   ShaderProgram shaderProgram;
 };
 

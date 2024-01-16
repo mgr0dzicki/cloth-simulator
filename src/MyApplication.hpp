@@ -21,7 +21,7 @@ class MyApplication : public Application {
   virtual void loop();
 
  private:
-  const int size = 10;
+  const int size = 50;
 
   // shader
   Shader vertexShader;
