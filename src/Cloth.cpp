@@ -39,12 +39,10 @@ Link::Link(Node* a, Node* b)
 void Link::update() {
   glm::vec3 diff = a->position - b->position;
   float currLen = glm::length(diff);
-  if (currLen > length) {
-    float perc = (currLen - length) / currLen * STIFFNESS;
-    glm::vec3 off = diff * perc;
-    a->position -= off;
-    b->position += off;
-  }
+  float perc = (currLen - length) / currLen * STIFFNESS;
+  glm::vec3 off = diff * perc;
+  a->position -= off;
+  b->position += off;
 }
 
 Cloth::Cloth(glm::vec3 pos,
@@ -89,7 +87,7 @@ void Cloth::update(float dt, float prevDt) {
     for (auto& node : line)
       node.update(dt, prevDt);
 
-  for (int t = 0; t < 2; t++) {
+  for (int t = 0; t < 5; t++) {
     for (auto& link : links)
       link.update();
 
