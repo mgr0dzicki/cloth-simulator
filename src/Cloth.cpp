@@ -89,38 +89,34 @@ void Cloth::update(float dt, float prevDt) {
     for (auto& node : line)
       node.update(dt, prevDt);
 
-  for (int t = 0; t < 10; t++) {
+  for (int t = 0; t < 2; t++) {
     for (auto& link : links)
       link.update();
 
     for (auto& line : nodes)
       for (auto& node : line)
-        node.constrainBall(glm::vec3(0, 0, 2), 2);
+        node.constrainBall(glm::vec3(0, 0, 2), 1.5);
   }
 }
 
-void Cloth::draw() {
+void drawRectangularGrid(std::vector<std::vector<VertexType>> grid,
+                         ShaderProgram shaderProgram) {
   std::vector<VertexType> vertices;
   std::vector<GLuint> index;
 
-  for (auto& line : nodes) {
-    for (auto& node : line) {
-      VertexType v;
-      v.position = node.position;
-      v.color = glm::vec4(1.0, 1.0, 1.0, 1.0);
-      vertices.push_back(v);
-    }
-  }
+  for (auto& line : grid)
+    for (auto& node : line)
+      vertices.push_back(node);
 
-  for (size_t y = 0; y < nodes.size() - 1; ++y) {
-    for (size_t x = 0; x < nodes[y].size() - 1; ++x) {
-      index.push_back((x + 0) + nodes[y].size() * (y + 0));
-      index.push_back((x + 1) + nodes[y].size() * (y + 0));
-      index.push_back((x + 1) + nodes[y].size() * (y + 1));
+  for (size_t y = 0; y < grid.size() - 1; ++y) {
+    for (size_t x = 0; x < grid[y].size() - 1; ++x) {
+      index.push_back((x + 0) + grid[y].size() * (y + 0));
+      index.push_back((x + 1) + grid[y].size() * (y + 0));
+      index.push_back((x + 1) + grid[y].size() * (y + 1));
 
-      index.push_back((x + 1) + nodes[y].size() * (y + 1));
-      index.push_back((x + 0) + nodes[y].size() * (y + 1));
-      index.push_back((x + 0) + nodes[y].size() * (y + 0));
+      index.push_back((x + 1) + grid[y].size() * (y + 1));
+      index.push_back((x + 0) + grid[y].size() * (y + 1));
+      index.push_back((x + 0) + grid[y].size() * (y + 0));
     }
   }
 
@@ -160,4 +156,85 @@ void Cloth::draw() {
   glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, NULL);
 
   glBindVertexArray(0);
+}
+
+std::vector<std::vector<VertexType>> catmullClarkStep(
+    std::vector<std::vector<VertexType>> grid) {
+  size_t n = grid.size();
+  size_t m = grid[0].size();
+
+  std::vector<std::vector<VertexType>> outGrid(n * 2 - 1);
+  for (size_t i = 0; i < outGrid.size(); i++)
+    outGrid[i].resize(m * 2 - 1);
+
+  for (size_t i = 0; i + 1 < n; i++)
+    for (size_t j = 0; j + 1 < m; j++)
+      outGrid[2 * i + 1][2 * j + 1] =
+          1.F / 4 * grid[i][j] + 1.F / 4 * grid[i][j + 1] +
+          1.F / 4 * grid[i + 1][j] + 1.F / 4 * grid[i + 1][j + 1];
+
+  for (size_t i = 1; i + 1 < n; i++)
+    for (size_t j = 0; j + 1 < m; j++)
+      outGrid[2 * i][2 * j + 1] =
+          1.F/16 * grid[i - 1][j] + 3.F/8 * grid[i][j] + 1.F/16 * grid[i + 1][j] +
+          1.F/16 * grid[i - 1][j + 1] + 3.F/8 * grid[i][j + 1] + 1.F/16 * grid[i + 1][j + 1];
+
+  for (size_t i = 0; i + 1 < n; i++)
+    for (size_t j = 1; j + 1 < m; j++)
+      outGrid[2 * i + 1][2 * j] =
+          1.F/16 * grid[i][j - 1] + 3.F/8 * grid[i][j] + 1.F/16 * grid[i][j + 1] +
+          1.F/16 * grid[i + 1][j - 1] + 3.F/8 * grid[i + 1][j] + 1.F/16 * grid[i + 1][j + 1];
+
+  for (size_t i = 1; i + 1 < n; i++)
+    for (size_t j = 1; j + 1 < m; j++)
+      outGrid[2 * i][2 * j] = 1.F/64 * grid[i - 1][j - 1] + 3.F/32 * grid[i - 1][j] + 1.F/64 * grid[i - 1][j + 1] +
+                              3.F/32 * grid[i][j - 1] + 9.F/16 * grid[i][j] + 3.F/32 * grid[i][j + 1] +
+                              1.F/64 * grid[i + 1][j - 1] + 3.F/32 * grid[i + 1][j] + 1.F/64 * grid[i + 1][j + 1];
+
+  outGrid[0][0] = grid[0][0];
+  outGrid[0][(m - 1) * 2] = grid[0][m - 1];
+  outGrid[(n - 1) * 2][0] = grid[n - 1][0];
+  outGrid[(n - 1) * 2][(m - 1) * 2] = grid[n - 1][m - 1];
+
+  for (size_t i = 1; i + 1 < n; i++) {
+    outGrid[2 * i][0] = 1.F/8 * grid[i - 1][0] + 3.F/4 * grid[i][0] + 1.F/8 * grid[i + 1][0];
+    outGrid[2 * i][(m - 1) * 2] = 1.F/8 * grid[i - 1][m - 1] + 3.F/4 * grid[i][m - 1] + 1.F/8 * grid[i + 1][m - 1];
+  }
+
+  for (size_t j = 1; j + 1 < m; j++) {
+    outGrid[0][2 * j] = 1.F/8 * grid[0][j - 1] + 3.F/4 * grid[0][j] + 1.F/8 * grid[0][j + 1];
+    outGrid[(n - 1) * 2][2 * j] = 1.F/8 * grid[n - 1][j - 1] + 3.F/4 * grid[n - 1][j] + 1.F/8 * grid[n - 1][j + 1];
+  }
+
+  for (size_t i = 0; i + 1 < n; i++) {
+    outGrid[2 * i + 1][0] = 1.F/2 * grid[i][0] + 1.F/2 * grid[i + 1][0];
+    outGrid[2 * i + 1][(m - 1) * 2] = 1.F/2 * grid[i][m - 1] + 1.F/2 * grid[i + 1][m - 1];
+  }
+
+  for (size_t j = 0; j + 1 < m; j++) {
+    outGrid[0][2 * j + 1] = 1.F/2 * grid[0][j] + 1.F/2 * grid[0][j + 1];
+    outGrid[(n - 1) * 2][2 * j + 1] = 1.F/2 * grid[n - 1][j] + 1.F/2 * grid[n - 1][j + 1];
+  }
+
+  return outGrid;
+}
+
+std::vector<std::vector<VertexType>> catmullClark(std::vector<std::vector<VertexType>> grid, int n) {
+  for (int i = 0; i < n; i++)
+    grid = catmullClarkStep(grid);
+  return grid;
+}
+
+void Cloth::draw() {
+  std::vector<std::vector<VertexType>> grid(nodes.size());
+
+  for (size_t i = 0; i < nodes.size(); i++) {
+    grid[i].resize(nodes[i].size());
+    for (size_t j = 0; j < nodes[i].size(); j++) {
+      grid[i][j].position = nodes[i][j].position;
+      grid[i][j].color = glm::vec4(1.0, 1.0, 1.0, 1.0);
+    }
+  }
+
+  drawRectangularGrid(catmullClark(grid, 2), shaderProgram);
 }

@@ -26,7 +26,8 @@ void main ( void )
     gl_Position = gl_in[i].gl_Position;
     Out.Position = In[i].Position;
     Out.Normal = nv;
-    Out.Colour = In[i].Colour;
+    // Out.Colour = In[i].Colour;
+    Out.Colour = nv;
     EmitVertex ();
   }
   EndPrimitive ();

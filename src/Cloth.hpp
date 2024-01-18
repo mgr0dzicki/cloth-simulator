@@ -29,7 +29,7 @@ class Link {
   Node *a, *b;
   float length;
 
-  static constexpr float STIFFNESS = 0.5;
+  static constexpr float STIFFNESS = 0.46;
 };
 
 class Cloth {
