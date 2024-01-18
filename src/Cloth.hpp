@@ -16,21 +16,30 @@ class Node {
 
  private:
   glm::vec3 prevPosition;
+
+  static constexpr float AIR_RESISTANCE = 0.01;
 };
 
 class Link {
-  public:
-    Link(Node *a, Node *b);
-    void update();
+ public:
+  Link(Node* a, Node* b);
+  void update();
 
-  private:
-    Node *a, *b;
-    float length;
+ private:
+  Node *a, *b;
+  float length;
+
+  static constexpr float STIFFNESS = 0.5;
 };
 
 class Cloth {
  public:
-  Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height, ShaderProgram shaderProgram);
+  Cloth(glm::vec3 pos,
+        glm::vec3 dx,
+        glm::vec3 dy,
+        int width,
+        int height,
+        ShaderProgram shaderProgram);
   void update(float dt, float prevDt);
   void draw();
 

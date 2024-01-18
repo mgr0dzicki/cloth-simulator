@@ -1,23 +1,25 @@
 #include "Cloth.hpp"
 
-#include <iostream>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <iostream>
 #include "VertexType.hpp"
 #include "asset.hpp"
 #include "glError.hpp"
 
 const glm::vec3 G(0, 0, -9.81);
 
-
 Node::Node(glm::vec3 position, glm::vec3 velocity)
     : position(position), prevPosition(position - velocity) {}
 
 void Node::update(float dt, float prevDt) {
+  glm::vec3 dp = G * dt * dt;
+  if (prevDt != 0.) {
+    dp += (position - prevPosition) * dt / prevDt;
+  }
+
   glm::vec3 tmp = position;
-  if (prevDt != 0.)
-    position += (position - prevPosition) * dt / prevDt;
-  position += G * dt * dt;
+  position += (1.0F - AIR_RESISTANCE) * dp;
   prevPosition = tmp;
 }
 
@@ -31,20 +33,26 @@ void Node::constrainBall(glm::vec3 center, float radius) {
   }
 }
 
-Link::Link(Node *a, Node *b) : a(a), b(b), length(glm::length(a->position - b->position)) {}
+Link::Link(Node* a, Node* b)
+    : a(a), b(b), length(glm::length(a->position - b->position)) {}
 
 void Link::update() {
   glm::vec3 diff = a->position - b->position;
   float currLen = glm::length(diff);
   if (currLen > length) {
-    float perc = (currLen - length) / currLen / 2.;
+    float perc = (currLen - length) / currLen * STIFFNESS;
     glm::vec3 off = diff * perc;
     a->position -= off;
     b->position += off;
   }
 }
 
-Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height, ShaderProgram shaderProgram)
+Cloth::Cloth(glm::vec3 pos,
+             glm::vec3 dx,
+             glm::vec3 dy,
+             int width,
+             int height,
+             ShaderProgram shaderProgram)
     : shaderProgram(shaderProgram) {
   dx = dx / static_cast<float>(width);
   dy = dy / static_cast<float>(height);
@@ -76,7 +84,7 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height, S
   }
 }
 
-void Cloth::update(float dt, float prevDt)  {
+void Cloth::update(float dt, float prevDt) {
   for (auto& line : nodes)
     for (auto& node : line)
       node.update(dt, prevDt);
