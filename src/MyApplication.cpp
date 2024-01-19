@@ -9,7 +9,6 @@
 
 #include "asset.hpp"
 #include "glError.hpp"
-#include "VertexType.hpp"
 
 MyApplication::MyApplication()
     : Application(),
@@ -47,7 +46,7 @@ void MyApplication::loop() {
   shaderProgram.setUniform("modelMatrix", model);
   shaderProgram.setUniform("viewProjectionMatrix", projection * view);
 
-  shaderProgram.setUniform("lightPosition", glm::vec4(0.0, 0.0, 10.0, 1.0));
+  shaderProgram.setUniform("lightPosition", glm::vec4(-5.0, -5.0, 10.0, 1.0));
   shaderProgram.setUniform("lightDirection", glm::vec3(0.8, 0.8, 0.8));
   shaderProgram.setUniform("lightAmbient", glm::vec3(0.1, 0.1, 0.15));
   shaderProgram.setUniform("lightAttenuation", glm::vec3(1.0, 0.0, 0.0));

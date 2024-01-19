@@ -3,7 +3,6 @@
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <iostream>
-#include "VertexType.hpp"
 #include "asset.hpp"
 #include "glError.hpp"
 
@@ -97,9 +96,9 @@ void Cloth::update(float dt, float prevDt) {
   }
 }
 
-void drawRectangularGrid(std::vector<std::vector<VertexType>> grid,
+void drawRectangularGrid(std::vector<std::vector<glm::vec3>> grid,
                          ShaderProgram shaderProgram) {
-  std::vector<VertexType> vertices;
+  std::vector<glm::vec3> vertices;
   std::vector<GLuint> index;
 
   for (auto& line : grid)
@@ -123,7 +122,7 @@ void drawRectangularGrid(std::vector<std::vector<VertexType>> grid,
   // vbo
   glGenBuffers(1, &vbo);
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
-  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(VertexType),
+  glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3),
                vertices.data(), GL_STATIC_DRAW);
   glBindBuffer(GL_ARRAY_BUFFER, 0);
 
@@ -142,11 +141,7 @@ void drawRectangularGrid(std::vector<std::vector<VertexType>> grid,
   glBindBuffer(GL_ARRAY_BUFFER, vbo);
 
   // map vbo to shader attributes
-  shaderProgram.setAttribute("in_Position", 4, sizeof(VertexType),
-                             offsetof(VertexType, position));
-  shaderProgram.setAttribute("in_Colour", 3, sizeof(VertexType),
-                             offsetof(VertexType, color));
-
+  shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
   // bind the ibo
   glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 
@@ -156,12 +151,12 @@ void drawRectangularGrid(std::vector<std::vector<VertexType>> grid,
   glBindVertexArray(0);
 }
 
-std::vector<std::vector<VertexType>> catmullClarkStep(
-    std::vector<std::vector<VertexType>> grid) {
+std::vector<std::vector<glm::vec3>> catmullClarkStep(
+    std::vector<std::vector<glm::vec3>> grid) {
   size_t n = grid.size();
   size_t m = grid[0].size();
 
-  std::vector<std::vector<VertexType>> outGrid(n * 2 - 1);
+  std::vector<std::vector<glm::vec3>> outGrid(n * 2 - 1);
   for (size_t i = 0; i < outGrid.size(); i++)
     outGrid[i].resize(m * 2 - 1);
 
@@ -217,22 +212,21 @@ std::vector<std::vector<VertexType>> catmullClarkStep(
   return outGrid;
 }
 
-std::vector<std::vector<VertexType>> catmullClark(std::vector<std::vector<VertexType>> grid, int n) {
+std::vector<std::vector<glm::vec3>> catmullClark(std::vector<std::vector<glm::vec3>> grid, int n) {
   for (int i = 0; i < n; i++)
     grid = catmullClarkStep(grid);
   return grid;
 }
 
 void Cloth::draw() {
-  std::vector<std::vector<VertexType>> grid(nodes.size());
+  std::vector<std::vector<glm::vec3>> grid(nodes.size());
 
   for (size_t i = 0; i < nodes.size(); i++) {
     grid[i].resize(nodes[i].size());
     for (size_t j = 0; j < nodes[i].size(); j++) {
-      grid[i][j].position = nodes[i][j].position;
-      grid[i][j].color = glm::vec4(1.0, 1.0, 1.0, 1.0);
+      grid[i][j] = nodes[i][j].position;
     }
   }
 
-  drawRectangularGrid(catmullClark(grid, 2), shaderProgram);
+  drawRectangularGrid(catmullClark(grid, 3), shaderProgram);
 }

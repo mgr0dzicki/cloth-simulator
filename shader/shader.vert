@@ -1,12 +1,8 @@
 #version 420
 
 in vec4 in_Position;
-in vec3 in_Colour;
 
-out Vertex {
-  vec3 Colour;
-  vec3 Position;
-} Out;
+out vec3 v_Position;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewProjectionMatrix;
@@ -16,7 +12,6 @@ void main(void) {
   vec4 Pos;
 
   Pos = modelMatrix * in_Position;
-  Out.Position = Pos.xyz / Pos.w;
-  Out.Colour = in_Colour;
+  v_Position = Pos.xyz / Pos.w;
   gl_Position = viewProjectionMatrix * Pos;
 }
