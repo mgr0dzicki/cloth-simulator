@@ -31,8 +31,7 @@ void MyApplication::loop() {
   std::cout << "dt=" << dt << std::endl;
   float prevDt = prevDeltaTime;
   // set matrix : projection + view
-  projection = glm::perspective(float(2.0 * atan(getHeight() / 1920.f)),
-                                getWindowRatio(), 0.1f, 100.f);
+  projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
   view = glm::lookAt(glm::vec3(20.0, 0.0, 20.0),
                      glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
 
