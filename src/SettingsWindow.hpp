@@ -4,6 +4,11 @@
 #include "Cloth.hpp"
 #include <functional>
 
+namespace Settings {
+extern bool diagonalLinks;
+extern bool farLinks;
+} // namespace Settings
+
 class SettingsWindow {
   public:
     SettingsWindow(std::function<void(int)> subdivisionStepsCallback);

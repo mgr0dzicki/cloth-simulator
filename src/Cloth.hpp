@@ -55,7 +55,7 @@ class Cloth {
 
   private:
     std::vector<std::vector<Node>> nodes;
-    std::vector<Link> links;
+    std::vector<Link> regularLinks, diagonalLinks, farLinks;
     MeshDrawer meshDrawer;
     int subdivisionSteps = SUBDIVISION_STEPS_MAX;
     ShaderProgram shaderProgram;

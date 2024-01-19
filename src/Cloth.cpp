@@ -1,5 +1,6 @@
 #include "Cloth.hpp"
 
+#include "SettingsWindow.hpp"
 #include "asset.hpp"
 #include "glError.hpp"
 #include <GL/glew.h>
@@ -66,17 +67,19 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
     for (int y = 0; y <= height; ++y) {
         for (int x = 0; x <= width; ++x) {
             if (x < width)
-                links.push_back(Link(&nodes[y][x], &nodes[y][x + 1]));
+                regularLinks.push_back(Link(&nodes[y][x], &nodes[y][x + 1]));
             if (y < height)
-                links.push_back(Link(&nodes[y][x], &nodes[y + 1][x]));
+                regularLinks.push_back(Link(&nodes[y][x], &nodes[y + 1][x]));
             if (x < width && y < height) {
-                links.push_back(Link(&nodes[y][x], &nodes[y + 1][x + 1]));
-                links.push_back(Link(&nodes[y][x + 1], &nodes[y + 1][x]));
+                diagonalLinks.push_back(
+                    Link(&nodes[y][x], &nodes[y + 1][x + 1]));
+                diagonalLinks.push_back(
+                    Link(&nodes[y][x + 1], &nodes[y + 1][x]));
             }
             if (x < width - 1)
-                links.push_back(Link(&nodes[y][x], &nodes[y][x + 2]));
+                farLinks.push_back(Link(&nodes[y][x], &nodes[y][x + 2]));
             if (y < height - 1)
-                links.push_back(Link(&nodes[y][x], &nodes[y + 2][x]));
+                farLinks.push_back(Link(&nodes[y][x], &nodes[y + 2][x]));
         }
     }
 }
@@ -87,8 +90,16 @@ void Cloth::update(float dt, float prevDt) {
             node.update(dt, prevDt);
 
     for (int t = 0; t < 5; t++) {
-        for (auto &link : links)
+        for (auto &link : regularLinks)
             link.update();
+
+        if (Settings::diagonalLinks)
+            for (auto &link : diagonalLinks)
+                link.update();
+
+        if (Settings::farLinks)
+            for (auto &link : farLinks)
+                link.update();
 
         for (auto &line : nodes)
             for (auto &node : line)
