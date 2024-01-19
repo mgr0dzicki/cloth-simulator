@@ -6,8 +6,8 @@
  *      * MIT
  */
 
-#ifndef OPENGL_CMAKE_SKELETON_MYAPPLICATION
-#define OPENGL_CMAKE_SKELETON_MYAPPLICATION
+#ifndef MYAPPLICATION_HPP
+#define MYAPPLICATION_HPP
 
 #include "Application.hpp"
 #include "Cloth.hpp"
@@ -45,4 +45,4 @@ class MyApplication : public Application {
     SettingsWindow settingsWindow;
 };
 
-#endif // OPENGL_CMAKE_SKELETON_MYAPPLICATION
+#endif // MYAPPLICATION_HPP

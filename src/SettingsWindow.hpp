@@ -1,5 +1,5 @@
-#ifndef OPENGL_CMAKE_SKELETON_SETTINGSWINDOW
-#define OPENGL_CMAKE_SKELETON_SETTINGSWINDOW
+#ifndef SETTINGSWINDOW_HPP
+#define SETTINGSWINDOW_HPP
 
 #include "Cloth.hpp"
 #include <functional>
@@ -19,4 +19,4 @@ class SettingsWindow {
     std::function<void(int)> subdivisionStepsCallback;
 };
 
-#endif // OPENGL_CMAKE_SKELETON_SETTINGSWINDOW
+#endif // SETTINGSWINDOW_HPP

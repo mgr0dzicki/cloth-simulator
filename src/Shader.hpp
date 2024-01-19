@@ -5,8 +5,8 @@
  * Licence:
  *      * MIT
  */
-#ifndef OPENGL_CMAKE_SKELETON_SHADER_HPP
-#define OPENGL_CMAKE_SKELETON_SHADER_HPP
+#ifndef SHADER_HPP
+#define SHADER_HPP
 
 #define GLM_FORCE_RADIANS
 #include <GL/glew.h>
@@ -92,4 +92,4 @@ class ShaderProgram {
     void link();
 };
 
-#endif // OPENGL_CMAKE_SKELETON_SHADER_HPP
+#endif // SHADER_HPP

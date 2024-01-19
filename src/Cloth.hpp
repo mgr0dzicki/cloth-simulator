@@ -1,5 +1,5 @@
-#ifndef OPENGL_CMAKE_SKELETON_CLOTH_HPP
-#define OPENGL_CMAKE_SKELETON_CLOTH_HPP
+#ifndef CLOTH_HPP
+#define CLOTH_HPP
 
 #include "Shader.hpp"
 #include <glm/glm.hpp>
@@ -63,4 +63,4 @@ class Cloth {
     constexpr static int SUBDIVISION_MESH_SIZE_MAX = 241;
 };
 
-#endif // OPENGL_CMAKE_SKELETON_CLOTH_HPP
+#endif // CLOTH_HPP

@@ -6,8 +6,8 @@
  *      * MIT
  */
 
-#ifndef OPENGL_CMAKE_SKELETON_APPLICATION_HPP
-#define OPENGL_CMAKE_SKELETON_APPLICATION_HPP
+#ifndef APPLICATION_HPP
+#define APPLICATION_HPP
 
 #include <string>
 
@@ -77,4 +77,4 @@ class Application {
     virtual void loop();
 };
 
-#endif /* end of include guard: OPENGL_CMAKE_SKELETON_APPLICATION_HPP */
+#endif // APPLICATION_HPP
