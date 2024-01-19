@@ -18,7 +18,10 @@ MyApplication::MyApplication()
       geometryShader(SHADER_DIR "/shader.geom", GL_GEOMETRY_SHADER),
       shaderProgram({vertexShader, fragmentShader, geometryShader}),
       cloth(glm::vec3(-5.0, -5.0, 5.0), glm::vec3(10.0, 0.0, 0.0),
-            glm::vec3(0.0, 10.0, 0.0), size, size, shaderProgram) {
+            glm::vec3(0.0, 10.0, 0.0), size, size, shaderProgram),
+      settingsWindow([&](int k) {
+        cloth.setSubdivisionSteps(k);
+      }) {
   glCheckError(__FILE__, __LINE__);
 }
 
@@ -31,7 +34,7 @@ void MyApplication::loop() {
   float dt = getFrameDeltaTime();
   float prevDt = prevDeltaTime;
 
-  SettingsWindow settingsWindow(dt);
+  settingsWindow.draw(dt);
 
   // set matrix : projection + view
   projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
@@ -49,7 +52,7 @@ void MyApplication::loop() {
   shaderProgram.setUniform("modelMatrix", model);
   shaderProgram.setUniform("viewProjectionMatrix", projection * view);
 
-  shaderProgram.setUniform("lightPosition", glm::vec4(-5.0, -5.0, 10.0, 1.0));
+  shaderProgram.setUniform("lightPosition", glm::vec4(20.0, 0.0, 10.0, 1.0));
   shaderProgram.setUniform("lightDirection", glm::vec3(0.8, 0.8, 0.8));
   shaderProgram.setUniform("lightAmbient", glm::vec3(0.1, 0.1, 0.15));
   shaderProgram.setUniform("lightAttenuation", glm::vec3(1.0, 0.0, 0.0));

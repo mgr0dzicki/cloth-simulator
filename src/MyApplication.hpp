@@ -12,6 +12,7 @@
 #include "Application.hpp"
 #include "Shader.hpp"
 #include "Cloth.hpp"
+#include "SettingsWindow.hpp"
 
 class MyApplication : public Application {
  public:
@@ -39,6 +40,9 @@ class MyApplication : public Application {
 
   // time
   float prevDeltaTime = 0.0;
+
+  // settings
+  SettingsWindow settingsWindow;
 };
 
 #endif  // OPENGL_CMAKE_SKELETON_MYAPPLICATION

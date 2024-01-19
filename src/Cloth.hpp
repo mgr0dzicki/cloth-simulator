@@ -53,11 +53,18 @@ class Cloth {
         ShaderProgram shaderProgram);
   void update(float dt, float prevDt);
   void draw();
+  void setSubdivisionSteps(int subdivisionSteps);
+
+  constexpr static int SUBDIVISION_STEPS_MAX = 3;
 
  private:
   std::vector<std::vector<Node>> nodes;
   std::vector<Link> links;
   MeshDrawer meshDrawer;
+  int subdivisionSteps = SUBDIVISION_STEPS_MAX;
+  ShaderProgram shaderProgram;
+
+  constexpr static int SUBDIVISION_MESH_SIZE_MAX = 241;
 };
 
 #endif  // OPENGL_CMAKE_SKELETON_CLOTH_HPP

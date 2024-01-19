@@ -49,7 +49,7 @@ Cloth::Cloth(glm::vec3 pos,
              glm::vec3 dy,
              int width,
              int height,
-             ShaderProgram shaderProgram) : meshDrawer(241, 241, shaderProgram) {
+             ShaderProgram shaderProgram) : meshDrawer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX, shaderProgram), shaderProgram(shaderProgram) {
   dx = dx / static_cast<float>(width);
   dy = dy / static_cast<float>(height);
   nodes.resize(height + 1);
@@ -220,5 +220,16 @@ void Cloth::draw() {
     }
   }
 
-  meshDrawer.draw(catmullClark(grid, 3));
+  meshDrawer.draw(catmullClark(grid, subdivisionSteps));
+}
+
+void Cloth::setSubdivisionSteps(int subdivisionSteps) {
+  this->subdivisionSteps = subdivisionSteps;
+  int n = nodes.size();
+  int m = nodes[0].size();
+  for (int i = 0; i < subdivisionSteps; i++) {
+    n = n * 2 - 1;
+    m = m * 2 - 1;
+  }
+  meshDrawer = MeshDrawer(n, m, shaderProgram);
 }
