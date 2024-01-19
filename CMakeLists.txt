@@ -26,6 +26,8 @@ add_executable(opengl-cmake-skeleton
   src/Shader.cpp
   src/Cloth.hpp
   src/Cloth.cpp
+  src/SettingsWindow.hpp
+  src/SettingsWindow.cpp
 )
 
 set_property(TARGET opengl-cmake-skeleton PROPERTY CXX_STANDARD 11)

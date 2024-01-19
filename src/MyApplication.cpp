@@ -9,6 +9,7 @@
 
 #include "asset.hpp"
 #include "glError.hpp"
+#include "SettingsWindow.hpp"
 
 MyApplication::MyApplication()
     : Application(),
@@ -28,8 +29,10 @@ void MyApplication::loop() {
 
   // float t = getTime();
   float dt = getFrameDeltaTime();
-  std::cout << "dt=" << dt << std::endl;
   float prevDt = prevDeltaTime;
+
+  SettingsWindow settingsWindow(dt);
+
   // set matrix : projection + view
   projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
   view = glm::lookAt(glm::vec3(20.0, 0.0, 20.0),

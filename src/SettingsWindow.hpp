@@ -1,0 +1,9 @@
+#ifndef OPENGL_CMAKE_SKELETON_SETTINGSWINDOW
+#define OPENGL_CMAKE_SKELETON_SETTINGSWINDOW
+
+class SettingsWindow {
+public:
+    SettingsWindow(float dt);
+};
+
+#endif // OPENGL_CMAKE_SKELETON_SETTINGSWINDOW
