@@ -28,6 +28,7 @@ void MyApplication::loop() {
 
   // float t = getTime();
   float dt = getFrameDeltaTime();
+  std::cout << "dt=" << dt << std::endl;
   float prevDt = prevDeltaTime;
   // set matrix : projection + view
   projection = glm::perspective(float(2.0 * atan(getHeight() / 1920.f)),

@@ -32,6 +32,17 @@ class Link {
   static constexpr float STIFFNESS = 0.46;
 };
 
+class MeshDrawer {
+public:
+  MeshDrawer(int n, int m, ShaderProgram shaderProgram);
+  void draw(std::vector<std::vector<glm::vec3>> const &mesh);
+
+private:
+  std::vector<GLuint> index;
+  GLuint vbo, ibo, vao;
+  ShaderProgram shaderProgram;
+};
+
 class Cloth {
  public:
   Cloth(glm::vec3 pos,
@@ -46,7 +57,7 @@ class Cloth {
  private:
   std::vector<std::vector<Node>> nodes;
   std::vector<Link> links;
-  ShaderProgram shaderProgram;
+  MeshDrawer meshDrawer;
 };
 
 #endif  // OPENGL_CMAKE_SKELETON_CLOTH_HPP
