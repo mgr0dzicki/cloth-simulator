@@ -2,8 +2,19 @@
 cmake_minimum_required (VERSION 3.1)
 project (opengl-cmake-skeleton)
 
+set(IMGUI_DIR lib/imgui)
+include_directories(${IMGUI_DIR} ${IMGUI_DIR}/backends)
+
 # The main executable
 add_executable(opengl-cmake-skeleton
+  ${IMGUI_DIR}/backends/imgui_impl_glfw.cpp
+  ${IMGUI_DIR}/backends/imgui_impl_opengl3.cpp
+  ${IMGUI_DIR}/imgui.cpp
+  ${IMGUI_DIR}/imgui_draw.cpp
+  ${IMGUI_DIR}/imgui_demo.cpp
+  ${IMGUI_DIR}/imgui_tables.cpp
+  ${IMGUI_DIR}/imgui_widgets.cpp
+
   src/Application.cpp
   src/Application.cpp
   src/MyApplication.cpp
