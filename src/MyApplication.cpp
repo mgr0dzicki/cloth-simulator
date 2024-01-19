@@ -7,64 +7,63 @@
 #include <iostream>
 #include <vector>
 
+#include "SettingsWindow.hpp"
 #include "asset.hpp"
 #include "glError.hpp"
-#include "SettingsWindow.hpp"
 
 MyApplication::MyApplication()
-    : Application(),
-      vertexShader(SHADER_DIR "/shader.vert", GL_VERTEX_SHADER),
+    : Application(), vertexShader(SHADER_DIR "/shader.vert", GL_VERTEX_SHADER),
       fragmentShader(SHADER_DIR "/shader.frag", GL_FRAGMENT_SHADER),
       geometryShader(SHADER_DIR "/shader.geom", GL_GEOMETRY_SHADER),
       shaderProgram({vertexShader, fragmentShader, geometryShader}),
       cloth(glm::vec3(-5.0, -5.0, 5.0), glm::vec3(10.0, 0.0, 0.0),
             glm::vec3(0.0, 10.0, 0.0), size, size, shaderProgram),
       settingsWindow([&](int k) {
-        cloth.setSubdivisionSteps(k);
+          cloth.setSubdivisionSteps(k);
       }) {
-  glCheckError(__FILE__, __LINE__);
+    glCheckError(__FILE__, __LINE__);
 }
 
 void MyApplication::loop() {
-  // exit on window close button pressed
-  if (glfwWindowShouldClose(getWindow()))
-    exit();
+    // exit on window close button pressed
+    if (glfwWindowShouldClose(getWindow()))
+        exit();
 
-  // float t = getTime();
-  float dt = getFrameDeltaTime();
-  float prevDt = prevDeltaTime;
+    // float t = getTime();
+    float dt = getFrameDeltaTime();
+    float prevDt = prevDeltaTime;
 
-  settingsWindow.draw(dt);
+    settingsWindow.draw(dt);
 
-  // set matrix : projection + view
-  projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
-  view = glm::lookAt(glm::vec3(20.0, 0.0, 20.0),
-                     glm::vec3(0.0, 0.0, 0.0), glm::vec3(0.0, 0.0, 1.0));
+    // set matrix : projection + view
+    projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
+    view = glm::lookAt(glm::vec3(20.0, 0.0, 20.0), glm::vec3(0.0, 0.0, 0.0),
+                       glm::vec3(0.0, 0.0, 1.0));
 
-  // clear
-  glClear(GL_COLOR_BUFFER_BIT);
-  glClearColor(0.0, 0.0, 0.0, 0.0);
-  glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    // clear
+    glClear(GL_COLOR_BUFFER_BIT);
+    glClearColor(0.0, 0.0, 0.0, 0.0);
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-  shaderProgram.use();
+    shaderProgram.use();
 
-  // send uniforms
-  shaderProgram.setUniform("modelMatrix", model);
-  shaderProgram.setUniform("viewProjectionMatrix", projection * view);
+    // send uniforms
+    shaderProgram.setUniform("modelMatrix", model);
+    shaderProgram.setUniform("viewProjectionMatrix", projection * view);
 
-  shaderProgram.setUniform("lightPosition", glm::vec4(20.0, 0.0, 10.0, 1.0));
-  shaderProgram.setUniform("lightDirection", glm::vec3(0.8, 0.8, 0.8));
-  shaderProgram.setUniform("lightAmbient", glm::vec3(0.1, 0.1, 0.15));
-  shaderProgram.setUniform("lightAttenuation", glm::vec3(1.0, 0.0, 0.0));
+    shaderProgram.setUniform("lightPosition", glm::vec4(20.0, 0.0, 10.0, 1.0));
+    shaderProgram.setUniform("lightDirection", glm::vec3(0.8, 0.8, 0.8));
+    shaderProgram.setUniform("lightAmbient", glm::vec3(0.1, 0.1, 0.15));
+    shaderProgram.setUniform("lightAttenuation", glm::vec3(1.0, 0.0, 0.0));
 
-  glCheckError(__FILE__, __LINE__);
+    glCheckError(__FILE__, __LINE__);
 
-  // draw
-  cloth.update(dt, prevDt);
-  prevDeltaTime = dt;
-  cloth.draw();
+    // draw
+    cloth.update(dt, prevDt);
+    prevDeltaTime = dt;
+    cloth.draw();
 
-  shaderProgram.unuse();
+    shaderProgram.unuse();
 
-  glCheckError(__FILE__, __LINE__);
+    glCheckError(__FILE__, __LINE__);
 }

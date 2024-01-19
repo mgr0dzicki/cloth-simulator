@@ -10,39 +10,39 @@
 #define OPENGL_CMAKE_SKELETON_MYAPPLICATION
 
 #include "Application.hpp"
-#include "Shader.hpp"
 #include "Cloth.hpp"
 #include "SettingsWindow.hpp"
+#include "Shader.hpp"
 
 class MyApplication : public Application {
- public:
-  MyApplication();
+  public:
+    MyApplication();
 
- protected:
-  virtual void loop();
+  protected:
+    virtual void loop();
 
- private:
-  const int size = 30;
+  private:
+    const int size = 30;
 
-  // shader
-  Shader vertexShader;
-  Shader fragmentShader;
-  Shader geometryShader;
-  ShaderProgram shaderProgram;
+    // shader
+    Shader vertexShader;
+    Shader fragmentShader;
+    Shader geometryShader;
+    ShaderProgram shaderProgram;
 
-  // shader matrix uniform
-  glm::mat4 projection = glm::mat4(1.0);
-  glm::mat4 view = glm::mat4(1.0);
-  glm::mat4 model = glm::mat4(1.0);
+    // shader matrix uniform
+    glm::mat4 projection = glm::mat4(1.0);
+    glm::mat4 view = glm::mat4(1.0);
+    glm::mat4 model = glm::mat4(1.0);
 
-  // cloth
-  Cloth cloth;
+    // cloth
+    Cloth cloth;
 
-  // time
-  float prevDeltaTime = 0.0;
+    // time
+    float prevDeltaTime = 0.0;
 
-  // settings
-  SettingsWindow settingsWindow;
+    // settings
+    SettingsWindow settingsWindow;
 };
 
-#endif  // OPENGL_CMAKE_SKELETON_MYAPPLICATION
+#endif // OPENGL_CMAKE_SKELETON_MYAPPLICATION

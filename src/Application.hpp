@@ -23,56 +23,58 @@ struct GLFWwindow;
 ///   * windowDimensionChanged()
 /// * let the user define the "loop" function.
 class Application {
- public:
-  Application();
+  public:
+    Application();
 
-  static Application& getInstance();
+    static Application &getInstance();
 
-  // get the window id
-  GLFWwindow* getWindow() const;
+    // get the window id
+    GLFWwindow *getWindow() const;
 
-  // window control
-  void exit();
+    // window control
+    void exit();
 
-  // delta time between frame and time from beginning
-  float getFrameDeltaTime() const;
-  float getTime() const;
+    // delta time between frame and time from beginning
+    float getFrameDeltaTime() const;
+    float getTime() const;
 
-  // application run
-  void run();
+    // application run
+    void run();
 
-  // Application informations
-  //
-  int getWidth();
-  int getHeight();
-  float getWindowRatio();
-  bool windowDimensionChanged();
+    // Application informations
+    //
+    int getWidth();
+    int getHeight();
+    float getWindowRatio();
+    bool windowDimensionChanged();
 
- private:
-  enum State { stateReady, stateRun, stateExit };
+  private:
+    enum State { stateReady, stateRun, stateExit };
 
-  State state;
+    State state;
 
-  Application& operator=(const Application&) { return *this; }
+    Application &operator=(const Application &) {
+        return *this;
+    }
 
-  GLFWwindow* window;
+    GLFWwindow *window;
 
-  // Time:
-  float time;
-  float deltaTime;
+    // Time:
+    float time;
+    float deltaTime;
 
-  // Dimensions:
-  int width;
-  int height;
-  bool dimensionChanged;
-  void detectWindowDimensionChange();
+    // Dimensions:
+    int width;
+    int height;
+    bool dimensionChanged;
+    void detectWindowDimensionChange();
 
- protected:
-  Application(const Application&){};
+  protected:
+    Application(const Application &){};
 
-  std::string title;
+    std::string title;
 
-  virtual void loop();
+    virtual void loop();
 };
 
 #endif /* end of include guard: OPENGL_CMAKE_SKELETON_APPLICATION_HPP */

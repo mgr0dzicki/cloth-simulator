@@ -13,6 +13,6 @@
 // Result is printed on the standard output
 // usage :
 //      glCheckError(__FILE__,__LINE__);
-void glCheckError(const char* file, unsigned int line);
+void glCheckError(const char *file, unsigned int line);
 
-#endif  // OPENGL_CMAKE_SKELETON_GLERROR_HPP
+#endif // OPENGL_CMAKE_SKELETON_GLERROR_HPP
