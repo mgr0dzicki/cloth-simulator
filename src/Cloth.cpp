@@ -99,12 +99,12 @@ MeshDrawer::MeshDrawer(int n, int m, ShaderProgram shaderProgram) : shaderProgra
   for (int y = 0; y < n - 1; ++y) {
     for (int x = 0; x < m - 1; ++x) {
       index.push_back((x + 0) + m * (y + 0));
-      index.push_back((x + 1) + m * (y + 0));
       index.push_back((x + 1) + m * (y + 1));
+      index.push_back((x + 1) + m * (y + 0));
 
       index.push_back((x + 1) + m * (y + 1));
-      index.push_back((x + 0) + m * (y + 1));
       index.push_back((x + 0) + m * (y + 0));
+      index.push_back((x + 0) + m * (y + 1));
     }
   }
 
