@@ -7,20 +7,24 @@
 #include <GLFW/glfw3.h>
 #include <iostream>
 
+// TODO: dac mozliwosc lapania myszka
+// TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
+// TODO: inne opcje renderowania
+
 const glm::vec3 G(0, 0, -9.81);
 
 Node::Node(glm::vec3 position, glm::vec3 velocity)
     : position(position), prevPosition(position - velocity) {
 }
 
-void Node::update(float dt, float prevDt) {
+void Node::update(float dt, float prevDt) { // TODO: sprobowac zalozyc dt=prevDt
     glm::vec3 dp = G * dt * dt;
     if (prevDt != 0.) {
         dp += (position - prevPosition) * dt / prevDt;
     }
 
     glm::vec3 tmp = position;
-    position += (1.0F - AIR_RESISTANCE) * dp;
+    position += (1.0F - AIR_RESISTANCE) * dp; // TODO: zeby dzialalo dla malego dt
     prevPosition = tmp;
 }
 
