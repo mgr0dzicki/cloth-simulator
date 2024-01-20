@@ -26,7 +26,7 @@ add_executable(cloth-simulator
 )
 
 set_property(TARGET cloth-simulator PROPERTY CXX_STANDARD 11)
-target_compile_options(cloth-simulator PRIVATE -Wall)
+target_compile_options(cloth-simulator PRIVATE -Wall -O2)
 
 add_definitions(-DGLEW_STATIC)
 add_subdirectory(lib/glfw EXCLUDE_FROM_ALL)
