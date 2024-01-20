@@ -27,8 +27,8 @@ Application &Application::getInstance() {
         throw std::runtime_error("There is no current Application");
 }
 
-Application::Application()
-    : state(stateReady), width(1000), height(800), title("Application") {
+Application::Application(std::string title)
+    : state(stateReady), width(1000), height(800), title(title) {
     currentApplication = this;
 
     cout << "[Info] GLFW initialisation" << endl;

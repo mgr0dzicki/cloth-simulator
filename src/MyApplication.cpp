@@ -12,7 +12,8 @@
 #include "glError.hpp"
 
 MyApplication::MyApplication()
-    : Application(), vertexShader(SHADER_DIR "/shader.vert", GL_VERTEX_SHADER),
+    : Application("Cloth simulator"),
+      vertexShader(SHADER_DIR "/shader.vert", GL_VERTEX_SHADER),
       fragmentShader(SHADER_DIR "/shader.frag", GL_FRAGMENT_SHADER),
       geometryShader(SHADER_DIR "/shader.geom", GL_GEOMETRY_SHADER),
       shaderProgram({vertexShader, fragmentShader, geometryShader}),

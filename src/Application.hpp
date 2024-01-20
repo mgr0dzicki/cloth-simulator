@@ -24,7 +24,7 @@ struct GLFWwindow;
 /// * let the user define the "loop" function.
 class Application {
   public:
-    Application();
+    Application(std::string title);
 
     static Application &getInstance();
 
