@@ -11,6 +11,7 @@ class Node {
     Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0));
     void update(float dt, float prevDt);
     void constrainBall(glm::vec3 center, float radius);
+    void collide(Node &other);
 
     glm::vec3 position;
 

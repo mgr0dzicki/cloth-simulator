@@ -9,7 +9,7 @@ Settings::Settings() {
 void Settings::setRecommended() {
     regularLinks = true;
     diagonalLinks = true;
-    farLinks = true;
+    farLinks = false;
     clothClothCollision = true;
     renderMode = RenderMode::Triangles;
 

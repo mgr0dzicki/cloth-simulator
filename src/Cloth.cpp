@@ -24,13 +24,26 @@ void Node::update(float dt, float prevDt) {
     prevPosition = tmp;
 }
 
+void Node::collide(Node &other) {
+    glm::vec3 diff = position - other.position;
+    float length = 0.4F; // TODO: uzaleznic od rozmiaru siatki!!!!
+    float currLen = glm::length(diff);
+    if (currLen > length)
+        return;
+    float perc = (currLen - length) / currLen * 0.4F;
+    glm::vec3 off = diff * perc;
+    position -= off;
+    other.position += off;
+}
+
 // quite poor one...
 void Node::constrainBall(glm::vec3 center, float radius) {
     glm::vec3 diff = position - center;
     float len = glm::length(diff);
     if (len < radius) {
-        position += diff * (radius - len) / len;
-        prevPosition = position;
+        // position += diff * (radius - len) / len;
+        // prevPosition = position;
+        position = prevPosition;
     }
 }
 
@@ -113,7 +126,21 @@ void Cloth::update(float dt, float prevDt) {
 
         for (auto &line : nodes)
             for (auto &node : line)
-                node.constrainBall(glm::vec3(0, 0, 2), 1.5);
+                node.constrainBall(glm::vec3(0, 0, 2), 1.0);
+
+        if (settings.clothClothCollision) {
+            for (int i = 0; i < static_cast<int>(nodes.size()); i++) {
+                for (int j = 0; j < static_cast<int>(nodes[i].size()); j++) {
+                    for (int k = 0; k < static_cast<int>(nodes.size()); k++) {
+                        for (int l = 0; l < static_cast<int>(nodes[k].size());
+                             l++) {
+                            if (abs(i - k) > 1 || abs(j - l) > 1)
+                                nodes[i][j].collide(nodes[k][l]);
+                        }
+                    }
+                }
+            }
+        }
     }
 }
 

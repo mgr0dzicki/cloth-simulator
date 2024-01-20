@@ -136,7 +136,6 @@ void Application::run() {
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
         // Swap Front and Back buffers (double buffering)
-        glfwSwapInterval(0);
         glfwSwapBuffers(window);
 
         // Pool and process events
