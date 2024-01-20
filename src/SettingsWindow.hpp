@@ -5,6 +5,7 @@
 #include <functional>
 
 namespace Settings {
+extern bool regularLinks;
 extern bool diagonalLinks;
 extern bool farLinks;
 } // namespace Settings

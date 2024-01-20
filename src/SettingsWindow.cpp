@@ -4,12 +4,14 @@
 namespace Settings {
 enum class RenderMode { Points, Lines, Triangles };
 
+bool regularLinks = true;
 bool diagonalLinks = true;
 bool farLinks = true;
 bool clothClothCollision = true;
 RenderMode renderMode = RenderMode::Triangles;
 
 void recommended() {
+    regularLinks = true;
     diagonalLinks = true;
     farLinks = true;
     clothClothCollision = true;
@@ -17,6 +19,7 @@ void recommended() {
 }
 
 void allDisabled() {
+    regularLinks = false;
     diagonalLinks = false;
     farLinks = false;
     clothClothCollision = false;
@@ -53,6 +56,8 @@ void SettingsWindow::draw(float dt) {
     ImGui::Spacing();
 
     ImGui::Text("Links");
+    ImGui::Checkbox("Regular", &Settings::regularLinks);
+    ImGui::SameLine();
     ImGui::Checkbox("Diagonal", &Settings::diagonalLinks);
     ImGui::SameLine();
     ImGui::Checkbox("Far", &Settings::farLinks);

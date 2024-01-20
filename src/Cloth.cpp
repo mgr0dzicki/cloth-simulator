@@ -90,8 +90,9 @@ void Cloth::update(float dt, float prevDt) {
             node.update(dt, prevDt);
 
     for (int t = 0; t < 5; t++) {
-        for (auto &link : regularLinks)
-            link.update();
+        if (Settings::regularLinks)
+            for (auto &link : regularLinks)
+                link.update();
 
         if (Settings::diagonalLinks)
             for (auto &link : diagonalLinks)
