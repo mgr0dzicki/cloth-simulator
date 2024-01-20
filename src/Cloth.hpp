@@ -49,7 +49,6 @@ class Cloth {
           ShaderProgram shaderProgram);
     void update(float dt, float prevDt);
     void draw();
-    void setSubdivisionSteps(int subdivisionSteps);
 
     constexpr static int SUBDIVISION_STEPS_MAX = 3;
 
@@ -57,8 +56,6 @@ class Cloth {
     std::vector<std::vector<Node>> nodes;
     std::vector<Link> regularLinks, diagonalLinks, farLinks;
     MeshDrawer meshDrawer;
-    int subdivisionSteps = SUBDIVISION_STEPS_MAX;
-    ShaderProgram shaderProgram;
 
     constexpr static int SUBDIVISION_MESH_SIZE_MAX = 241;
 };

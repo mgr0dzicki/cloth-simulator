@@ -16,17 +16,12 @@ add_executable(cloth-simulator
   ${IMGUI_DIR}/imgui_widgets.cpp
 
   src/Application.cpp
-  src/Application.cpp
   src/MyApplication.cpp
-  src/MyApplication.cpp
-  src/glError.hpp
   src/glError.cpp
   src/main.cpp
-  src/Shader.hpp
   src/Shader.cpp
-  src/Cloth.hpp
   src/Cloth.cpp
-  src/SettingsWindow.hpp
+  src/Settings.cpp
   src/SettingsWindow.cpp
 )
 

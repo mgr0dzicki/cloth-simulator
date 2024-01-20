@@ -40,9 +40,6 @@ class MyApplication : public Application {
 
     // time
     float prevDeltaTime = 0.0;
-
-    // settings
-    SettingsWindow settingsWindow;
 };
 
 #endif // MYAPPLICATION_HPP

@@ -1,6 +1,6 @@
 #include "Cloth.hpp"
 
-#include "SettingsWindow.hpp"
+#include "Settings.hpp"
 #include "asset.hpp"
 #include "glError.hpp"
 #include <GL/glew.h>
@@ -50,8 +50,7 @@ void Link::update() {
 Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
              ShaderProgram shaderProgram)
     : meshDrawer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
-                 shaderProgram),
-      shaderProgram(shaderProgram) {
+                 shaderProgram) {
     dx = dx / static_cast<float>(width);
     dy = dy / static_cast<float>(height);
     nodes.resize(height + 1);
@@ -82,6 +81,16 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
                 farLinks.push_back(Link(&nodes[y][x], &nodes[y + 2][x]));
         }
     }
+
+    settings.registerSubdivisionStepsCallback([this, shaderProgram]() {
+        int n = nodes.size();
+        int m = nodes[0].size();
+        for (int i = 0; i < settings.subdivisionSteps; i++) {
+            n = n * 2 - 1;
+            m = m * 2 - 1;
+        }
+        meshDrawer = MeshDrawer(n, m, shaderProgram);
+    });
 }
 
 void Cloth::update(float dt, float prevDt) {
@@ -90,15 +99,15 @@ void Cloth::update(float dt, float prevDt) {
             node.update(dt, prevDt);
 
     for (int t = 0; t < 5; t++) {
-        if (Settings::regularLinks)
+        if (settings.regularLinks)
             for (auto &link : regularLinks)
                 link.update();
 
-        if (Settings::diagonalLinks)
+        if (settings.diagonalLinks)
             for (auto &link : diagonalLinks)
                 link.update();
 
-        if (Settings::farLinks)
+        if (settings.farLinks)
             for (auto &link : farLinks)
                 link.update();
 
@@ -248,16 +257,5 @@ void Cloth::draw() {
         }
     }
 
-    meshDrawer.draw(catmullClark(grid, subdivisionSteps));
-}
-
-void Cloth::setSubdivisionSteps(int subdivisionSteps) {
-    this->subdivisionSteps = subdivisionSteps;
-    int n = nodes.size();
-    int m = nodes[0].size();
-    for (int i = 0; i < subdivisionSteps; i++) {
-        n = n * 2 - 1;
-        m = m * 2 - 1;
-    }
-    meshDrawer = MeshDrawer(n, m, shaderProgram);
+    meshDrawer.draw(catmullClark(grid, settings.subdivisionSteps));
 }

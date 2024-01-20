@@ -1,37 +1,8 @@
 #include "SettingsWindow.hpp"
+#include "Settings.hpp"
 #include <imgui.h>
 
-namespace Settings {
-enum class RenderMode { Points, Lines, Triangles };
-
-bool regularLinks = true;
-bool diagonalLinks = true;
-bool farLinks = true;
-bool clothClothCollision = true;
-RenderMode renderMode = RenderMode::Triangles;
-
-void recommended() {
-    regularLinks = true;
-    diagonalLinks = true;
-    farLinks = true;
-    clothClothCollision = true;
-    renderMode = RenderMode::Triangles;
-}
-
-void allDisabled() {
-    regularLinks = false;
-    diagonalLinks = false;
-    farLinks = false;
-    clothClothCollision = false;
-    renderMode = RenderMode::Points;
-}
-} // namespace Settings
-
-SettingsWindow::SettingsWindow(
-    std::function<void(int)> subdivisionStepsCallback)
-    : subdivisionStepsCallback(subdivisionStepsCallback){};
-
-void SettingsWindow::draw(float dt) {
+void drawSettingsWindow(float dt) {
     const ImGuiViewport *main_viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(
         ImVec2(main_viewport->WorkPos.x, main_viewport->WorkPos.y),
@@ -45,37 +16,38 @@ void SettingsWindow::draw(float dt) {
     ImGui::Separator();
 
     ImGui::Text("Render mode");
-    ImGui::RadioButton("Points", (int *)&Settings::renderMode,
+    ImGui::RadioButton("Points", (int *)&settings.renderMode,
                        (int)Settings::RenderMode::Points);
     ImGui::SameLine();
-    ImGui::RadioButton("Lines", (int *)&Settings::renderMode,
+    ImGui::RadioButton("Lines", (int *)&settings.renderMode,
                        (int)Settings::RenderMode::Lines);
     ImGui::SameLine();
-    ImGui::RadioButton("Triangles", (int *)&Settings::renderMode,
+    ImGui::RadioButton("Triangles", (int *)&settings.renderMode,
                        (int)Settings::RenderMode::Triangles);
     ImGui::Spacing();
 
     ImGui::Text("Links");
-    ImGui::Checkbox("Regular", &Settings::regularLinks);
+    ImGui::Checkbox("Regular", &settings.regularLinks);
     ImGui::SameLine();
-    ImGui::Checkbox("Diagonal", &Settings::diagonalLinks);
+    ImGui::Checkbox("Diagonal", &settings.diagonalLinks);
     ImGui::SameLine();
-    ImGui::Checkbox("Far", &Settings::farLinks);
+    ImGui::Checkbox("Far", &settings.farLinks);
     ImGui::Spacing();
 
-    ImGui::Checkbox("Cloth-cloth collision", &Settings::clothClothCollision);
+    ImGui::Checkbox("Cloth-cloth collision", &settings.clothClothCollision);
     ImGui::Spacing();
 
-    if (ImGui::SliderInt("Subdivision steps", &subdivisionSteps, 0, 3))
-        subdivisionStepsCallback(subdivisionSteps);
+    if (ImGui::SliderInt("Subdivision steps", &settings.subdivisionSteps, 0,
+                         Cloth::SUBDIVISION_STEPS_MAX))
+        settings.subdivisionStepsCallback();
 
     ImGui::Spacing();
 
     if (ImGui::Button("Recommended"))
-        Settings::recommended();
+        settings.setRecommended();
     ImGui::SameLine();
     if (ImGui::Button("All disabled"))
-        Settings::allDisabled();
+        settings.setAllDisabled();
 
     ImGui::End();
 }
