@@ -188,6 +188,7 @@ void MeshDrawer::draw(std::vector<std::vector<glm::vec3>> const &mesh) {
                  vertices.data(), GL_STATIC_DRAW);
     glCheckError(__FILE__, __LINE__);
     shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
+    shaderProgram.setUniform("modelMatrix", glm::mat4(1));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
 

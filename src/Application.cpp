@@ -45,7 +45,7 @@ Application::Application(std::string title)
     glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, minor);
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
     glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    glfwWindowHint(GLFW_SAMPLES, 8 );
+    glfwWindowHint(GLFW_SAMPLES, 8);
 
     // create the window
     window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
@@ -75,6 +75,10 @@ Application::Application(std::string title)
     glEnable(GL_DEPTH_TEST); // enable depth-testing
     glDepthFunc(
         GL_LESS); // depth-testing interprets a smaller value as "closer"
+
+    // mouse callbacks
+    glfwSetCursorPosCallback(window, glfwCursorPosCallback);
+    glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
 
     // vsync
     // glfwSwapInterval(false);
@@ -179,4 +183,16 @@ float Application::getWindowRatio() {
 
 bool Application::windowDimensionChanged() {
     return dimensionChanged;
+}
+
+void Application::glfwCursorPosCallback(GLFWwindow *window, double x,
+                                        double y) {
+    Application::getInstance().onMouseMove(x, y);
+}
+
+void Application::glfwMouseButtonCallback(GLFWwindow *window, int button,
+                                          int action, int mods) {
+    double x, y;
+    glfwGetCursorPos(window, &x, &y);
+    Application::getInstance().onMouseButton(button, action, mods, x, y);
 }

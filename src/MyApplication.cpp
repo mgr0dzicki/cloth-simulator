@@ -20,6 +20,11 @@ MyApplication::MyApplication()
       cloth(glm::vec3(-5.0, -5.0, 5.0), glm::vec3(10.0, 0.0, 0.0),
             glm::vec3(0.0, 10.0, 0.0), size, size, shaderProgram) {
     glCheckError(__FILE__, __LINE__);
+
+    glm::mat4 projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
+    glm::mat4 view = glm::lookAt(glm::vec3(20.0, 0.0, 20.0), glm::vec3(0.0, 0.0, 0.0),
+                       glm::vec3(0.0, 0.0, 1.0));
+    viewProjectionMatrix = projection * view;
 }
 
 void MyApplication::loop() {
@@ -33,11 +38,6 @@ void MyApplication::loop() {
 
     drawSettingsWindow(dt);
 
-    // set matrix : projection + view
-    projection = glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
-    view = glm::lookAt(glm::vec3(20.0, 0.0, 20.0), glm::vec3(0.0, 0.0, 0.0),
-                       glm::vec3(0.0, 0.0, 1.0));
-
     // clear
     glClear(GL_COLOR_BUFFER_BIT);
     glClearColor(0.0, 0.0, 0.0, 0.0);
@@ -46,8 +46,7 @@ void MyApplication::loop() {
     shaderProgram.use();
 
     // send uniforms
-    shaderProgram.setUniform("modelMatrix", model);
-    shaderProgram.setUniform("viewProjectionMatrix", projection * view);
+    shaderProgram.setUniform("viewProjectionMatrix", viewProjectionMatrix);
 
     shaderProgram.setUniform("lightPosition", glm::vec4(20.0, 0.0, 10.0, 1.0));
     shaderProgram.setUniform("lightDirection", glm::vec3(0.8, 0.8, 0.8));
@@ -64,4 +63,18 @@ void MyApplication::loop() {
     shaderProgram.unuse();
 
     glCheckError(__FILE__, __LINE__);
+}
+
+void MyApplication::onMouseButton(int button, int action, int mods, double x,
+                                  double y) {
+    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
+        movingCloth = true;
+    } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
+        movingCloth = false;
+    }
+}
+
+void MyApplication::onMouseMove(double x, double y) {
+    if (movingCloth) {
+    }
 }

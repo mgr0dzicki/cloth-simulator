@@ -20,6 +20,9 @@ class MyApplication : public Application {
 
   protected:
     virtual void loop();
+    virtual void onMouseMove(double x, double y);
+    virtual void onMouseButton(int button, int action, int mods, double x,
+                               double y);
 
   private:
     const int size = 30;
@@ -31,15 +34,16 @@ class MyApplication : public Application {
     ShaderProgram shaderProgram;
 
     // shader matrix uniform
-    glm::mat4 projection = glm::mat4(1.0);
-    glm::mat4 view = glm::mat4(1.0);
-    glm::mat4 model = glm::mat4(1.0);
+    glm::mat4 viewProjectionMatrix;
 
     // cloth
     Cloth cloth;
 
     // time
     float prevDeltaTime = 0.0;
+
+    // state
+    bool movingCloth = false;
 };
 
 #endif // MYAPPLICATION_HPP

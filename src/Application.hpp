@@ -69,12 +69,18 @@ class Application {
     bool dimensionChanged;
     void detectWindowDimensionChange();
 
+    // Callbacks:
+    static void glfwCursorPosCallback(GLFWwindow *window, double x, double y);
+    static void glfwMouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+
   protected:
     Application(const Application &){};
 
     std::string title;
 
     virtual void loop();
+    virtual void onMouseButton(int button, int action, int mods, double x, double y) {};
+    virtual void onMouseMove(double x, double y) {};
 };
 
 #endif // APPLICATION_HPP
