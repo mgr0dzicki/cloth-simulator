@@ -23,7 +23,7 @@ class Settings {
 
     int meshSize;
     static constexpr int MIN_MESH_SIZE = 20;
-    static constexpr int RECOMMENDED_MESH_SIZE = 30;
+    static constexpr int RECOMMENDED_MESH_SIZE = 40;
     static constexpr int MAX_MESH_SIZE = 50;
 
     int subdividedMeshSize();

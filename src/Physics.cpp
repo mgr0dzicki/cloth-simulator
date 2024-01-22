@@ -7,6 +7,7 @@
 #include <GLFW/glfw3.h>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
+#include <future>
 
 // TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
 
@@ -159,7 +160,7 @@ void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
         for (auto &node : line)
             node.update(dt, prevDt);
 
-    for (int t = 0; t < 5; t++) {
+    for (int t = 0; t < 3; t++) {
         if (settings.regularLinks)
             for (auto &link : regularLinks)
                 link.update();
@@ -172,30 +173,55 @@ void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
             for (auto &link : farLinks)
                 link.update();
 
-        // for (auto &line : nodes)
-        //     for (auto &node : line)
-        //         node.constrainBall(glm::vec3(0, 0, 2), 1.0);
+        if (settings.clothClothCollision) {
+            float radius = std::min(glm::length(dx), glm::length(dy)) * 1.15F;
+
+            auto collide = [&](int istart, int kstart, int jstart, int lstart) {
+                for (int i = istart; i < static_cast<int>(nodes.size()); i += 2) {
+                    for (int j = jstart; j < static_cast<int>(nodes[i].size()); j += 2) {
+                        for (int k = kstart; k < static_cast<int>(nodes.size()); k += 2) {
+                            for (int l = lstart; l < static_cast<int>(nodes[k].size()); l += 2) {
+                                if (abs(i - k) > 1 || abs(j - l) > 1)
+                                    nodes[i][j].collide(nodes[k][l], radius);
+                            }
+                        }
+                    }
+                }
+            };
+
+            auto a1 = std::async(std::launch::async, collide, 0, 0, 0, 0);
+            auto a2 = std::async(std::launch::async, collide, 1, 1, 1, 1);
+            auto a3 = std::async(std::launch::async, collide, 0, 1, 1, 0);
+
+            a1.get();
+            a2.get();
+            a3.get();
+
+            a1 = std::async(std::launch::async, collide, 0, 1, 0, 1);
+            a2 = std::async(std::launch::async, collide, 1, 0, 1, 0);
+            a3 = std::async(std::launch::async, collide, 0, 0, 1, 1);
+
+            a1.get();
+            a2.get();
+            a3.get();
+
+            a1 = std::async(std::launch::async, collide, 0, 0, 1, 0);
+            a2 = std::async(std::launch::async, collide, 1, 1, 0, 1);
+
+            a1.get();
+            a2.get();
+
+            a1 = std::async(std::launch::async, collide, 0, 0, 0, 1);
+            a2 = std::async(std::launch::async, collide, 1, 1, 1, 0);
+
+            a1.get();
+            a2.get();
+        }
 
         for (auto solid : solids)
             for (auto &line : nodes)
                 for (auto &node : line)
                     solid->constrain(node);
-
-        if (settings.clothClothCollision) {
-            float radius = std::min(glm::length(dx), glm::length(dy)) * 1.2F;
-
-            for (int i = 0; i < static_cast<int>(nodes.size()); i++) {
-                for (int j = 0; j < static_cast<int>(nodes[i].size()); j++) {
-                    for (int k = 0; k < static_cast<int>(nodes.size()); k++) {
-                        for (int l = 0; l < static_cast<int>(nodes[k].size());
-                             l++) {
-                            if (abs(i - k) > 1 || abs(j - l) > 1)
-                                nodes[i][j].collide(nodes[k][l], radius);
-                        }
-                    }
-                }
-            }
-        }
     }
 }
 
