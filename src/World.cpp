@@ -24,7 +24,7 @@ World::World(TrianglesShaderProgram &trianglesShaderProgram,
 
     cloth = createCloth(trianglesShaderProgram, pointsAndLinesShaderProgram);
 
-    solids.push_back(new Cuboid(glm::vec3(-5.0, -7.0, -3.0), // a
+    solids.push_back(new Cuboid(glm::vec3(-7.0, -7.0, -3.0), // a
                                 glm::vec3(7.0, 7.0, -2.5),   // b
                                 glm::vec3(0.15, 0.1, 0.1)    // colour
                                 ));
