@@ -29,9 +29,6 @@ class MyApplication : public Application {
     TrianglesShaderProgram trianglesShaderProgram;
     PointsAndLinesShaderProgram pointsAndLinesShaderProgram;
 
-    // shader matrix uniform
-    glm::mat4 viewProjectionMatrix;
-
     // world
     World world;
 

@@ -18,18 +18,9 @@ MyApplication::MyApplication()
 
     glCheckError(__FILE__, __LINE__);
 
-    glm::mat4 projection =
-        glm::perspective(0.5f, getWindowRatio(), 0.1f, 100.f);
-    glm::mat4 view =
-        glm::lookAt(glm::vec3(30.0, 0.0, 5.0), glm::vec3(0.0, 0.0, 0.0),
-                    glm::vec3(0.0, 0.0, 1.0));
-    viewProjectionMatrix = projection * view;
-
     // send uniforms
-    trianglesShaderProgram.use();
-    trianglesShaderProgram.setUniform("viewProjectionMatrix",
-                                      viewProjectionMatrix);
 
+    trianglesShaderProgram.use();
     trianglesShaderProgram.setUniform("lightPosition",
                                       glm::vec4(20.0, 0.0, 10.0, 1.0));
     trianglesShaderProgram.setUniform("lightDirection",
@@ -41,19 +32,29 @@ MyApplication::MyApplication()
     trianglesShaderProgram.unuse();
 
     glCheckError(__FILE__, __LINE__);
-
-    pointsAndLinesShaderProgram.use();
-    pointsAndLinesShaderProgram.setUniform("viewProjectionMatrix",
-                                           viewProjectionMatrix);
-    pointsAndLinesShaderProgram.unuse();
-
-    glCheckError(__FILE__, __LINE__);
 }
 
 void MyApplication::loop() {
     // exit on window close button pressed
     if (glfwWindowShouldClose(getWindow()))
         exit();
+
+    glm::mat4 projection =
+        glm::perspective(0.5f, getWindowRatio(), 0.1f, 100.f);
+    glm::mat4 view =
+        glm::lookAt(glm::vec3(30.0, 0.0, 5.0), glm::vec3(0.0, 0.0, 0.0),
+                    glm::vec3(0.0, 0.0, 1.0));
+    glm::mat4 viewProjectionMatrix = projection * view;
+
+    trianglesShaderProgram.use();
+    trianglesShaderProgram.setUniform("viewProjectionMatrix",
+                                      viewProjectionMatrix);
+    trianglesShaderProgram.unuse();
+
+    pointsAndLinesShaderProgram.use();
+    pointsAndLinesShaderProgram.setUniform("viewProjectionMatrix",
+                                           viewProjectionMatrix);
+    pointsAndLinesShaderProgram.unuse();
 
     // float t = getTime();
     float dt = getFrameDeltaTime();
