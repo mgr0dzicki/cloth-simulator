@@ -116,8 +116,8 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 _dx, glm::vec3 _dy, glm::vec3 nodesColour,
       clothRenderer(settings.subdividedMeshSize(),
                     settings.subdividedMeshSize(), frontColour, backColour,
                     trianglesShaderProgram),
-      meshRenderer(settings.subdividedMeshSize(), settings.subdividedMeshSize(),
-                   nodesColour, linksColour, pointsAndLinesShaderProgram) {
+      meshRenderer(settings.meshSize + 1, settings.meshSize + 1, nodesColour,
+                   linksColour, pointsAndLinesShaderProgram) {
     nodes.resize(settings.meshSize + 1);
     for (int y = 0; y <= settings.meshSize; ++y) {
         for (int x = 0; x <= settings.meshSize; ++x) {
