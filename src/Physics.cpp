@@ -9,8 +9,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-// TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
-
 CuboidRenderer *Cuboid::renderer = nullptr;
 
 Cuboid::Cuboid(glm::vec3 a, glm::vec3 b, glm::vec3 colour)
@@ -81,7 +79,7 @@ Node::Node(glm::vec3 position, glm::vec3 velocity)
     : position(position), prevPosition(position - velocity) {
 }
 
-void Node::update(float dt, float prevDt) { // TODO: sprobowac zalozyc dt=prevDt
+void Node::update(float dt, float prevDt) {
     glm::vec3 dp = G * dt * dt;
     if (prevDt != 0.) {
         dp += (position - prevPosition) * dt / prevDt;
