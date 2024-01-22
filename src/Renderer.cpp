@@ -163,7 +163,7 @@ void MeshRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
 
 CuboidRenderer::CuboidRenderer(ShaderProgram &shaderProgram)
     : Renderer(shaderProgram) {
-    setIndices({0, 1, 2, 3, 6, 7, 4, 5, 0, 2, 4, 6, 5, 7, 1, 3});
+    setIndices({0, 1, 2, 3, 6, 7, 4, 5, 2, 6, 0, 4, 1, 5, 3, 7});
     setVertices({glm::vec3(-1, -1, -1), glm::vec3(-1, -1, 1),
                  glm::vec3(-1, 1, -1), glm::vec3(-1, 1, 1),
                  glm::vec3(1, -1, -1), glm::vec3(1, -1, 1), glm::vec3(1, 1, -1),

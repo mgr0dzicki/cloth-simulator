@@ -60,7 +60,7 @@ class BallRenderer : public Renderer {
     void render(glm::vec3 colour, glm::mat4 const &modelMatrix);
 
   private:
-    static constexpr int N = 50;
+    static constexpr int N = 100;
 };
 
 #endif // RENDERER_HPP

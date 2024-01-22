@@ -30,16 +30,24 @@ World::World(TrianglesShaderProgram &trianglesShaderProgram,
                                 ));
     solids.push_back(new Ball(glm::vec3(0.0, 0.0, 1.5), // center
                               1.0,                      // radius
-                              glm::vec3(0.1, 0.2, 0.6)  // colour
+                              glm::vec3(0.3, 0.15, 0.0) // colour
                               ));
-    solids.push_back(
-        new Ball(glm::vec3(-3.0, -3.0, 0.0), 1.5, glm::vec3(0.1, 0.2, 0.6)));
-    solids.push_back(
-        new Ball(glm::vec3(3.0, 3.0, -2.0), 1.5, glm::vec3(0.1, 0.2, 0.6)));
-    solids.push_back(
-        new Ball(glm::vec3(0.0, 0.0, -2.5), 0.5, glm::vec3(0.1, 0.2, 0.6)));
-    solids.push_back(
-        new Ball(glm::vec3(2.0, -2.0, -1.5), 1.0, glm::vec3(0.1, 0.2, 0.6)));
+    solids.push_back(new Ball(glm::vec3(-3.0, -3.0, 0.0), // center
+                              1.5,                        // radius
+                              glm::vec3(0.3, 0.15, 0.0)   // colour
+                              ));
+    solids.push_back(new Ball(glm::vec3(3.0, 3.0, -2.0), // center
+                              1.5,                       // radius
+                              glm::vec3(0.3, 0.15, 0.0)  // colour
+                              ));
+    solids.push_back(new Ball(glm::vec3(0.0, 0.0, -2.5), // center
+                              0.5,                       // radius
+                              glm::vec3(0.3, 0.15, 0.0)  // colour
+                              ));
+    solids.push_back(new Ball(glm::vec3(2.0, -2.0, -1.5), // center
+                              1.0,                        // radius
+                              glm::vec3(0.3, 0.15, 0.0)   // colour
+                              ));
 
     Cuboid::initRenderer(trianglesShaderProgram);
     Ball::initRenderer(trianglesShaderProgram);

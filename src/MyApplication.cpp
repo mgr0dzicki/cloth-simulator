@@ -25,7 +25,7 @@ MyApplication::MyApplication()
 
     trianglesShaderProgram.use();
     trianglesShaderProgram.setUniform("lightPosition",
-                                      glm::vec4(20.0, 0.0, 10.0, 1.0));
+                                      glm::vec4(2.0, 2.0, 8.0, 1.0));
     trianglesShaderProgram.setUniform("lightDirection",
                                       glm::vec3(0.8, 0.8, 0.8));
     trianglesShaderProgram.setUniform("lightAmbient",
@@ -80,7 +80,7 @@ void MyApplication::loop() {
 
 void MyApplication::onMouseButton(int button, int action, int mods, double x,
                                   double y) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT) {
+    if (button == GLFW_MOUSE_BUTTON_RIGHT) {
         if (action == GLFW_PRESS) {
             turning = true;
             prevMouseX = x;
