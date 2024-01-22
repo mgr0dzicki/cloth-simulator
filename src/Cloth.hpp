@@ -1,26 +1,26 @@
 #ifndef CLOTH_HPP
 #define CLOTH_HPP
 
+#include "Renderer.hpp"
 #include "Shader.hpp"
 #include <glm/glm.hpp>
 #include <vector>
 
 class Cube {
   public:
-    Cube(glm::vec3 center, float a, ShaderProgram shaderProgram);
+    Cube(glm::vec3 center, float a, ShaderProgram &shaderProgram);
     void draw();
 
   private:
     static GLuint vbo, ibo, vao;
     static size_t indexSize;
     glm::mat4 modelMatrix;
-    ShaderProgram shaderProgram;
+    ShaderProgram &shaderProgram;
 };
 
 class Node {
   public:
-    Node() = default;
-    Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0));
+    Node(glm::vec3 position, glm::vec3 velocity);
     void update(float dt, float prevDt);
     void constrainBall(glm::vec3 center, float radius);
     void collide(Node &other);
@@ -45,21 +45,11 @@ class Link {
     static constexpr float STIFFNESS = 0.46;
 };
 
-class MeshDrawer {
-  public:
-    MeshDrawer(int n, int m, ShaderProgram shaderProgram);
-    void draw(std::vector<std::vector<glm::vec3>> const &mesh);
-
-  private:
-    std::vector<GLuint> index;
-    GLuint vbo, ibo, vao;
-    ShaderProgram shaderProgram;
-};
-
 class Cloth {
   public:
     Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
-          ShaderProgram shaderProgram);
+          TrianglesShaderProgram &trianglesShaderProgram,
+          PointsAndLinesShaderProgram &pointsAndLinesShaderProgram);
     void update(float dt, float prevDt);
     void draw();
 
@@ -68,7 +58,8 @@ class Cloth {
   private:
     std::vector<std::vector<Node>> nodes;
     std::vector<Link> regularLinks, diagonalLinks, farLinks;
-    MeshDrawer meshDrawer;
+    ClothRenderer clothRenderer;
+    MeshRenderer meshRenderer;
 
     constexpr static int SUBDIVISION_MESH_SIZE_MAX = 241;
 };

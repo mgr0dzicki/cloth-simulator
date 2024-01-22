@@ -92,4 +92,14 @@ class ShaderProgram {
     void link();
 };
 
+class TrianglesShaderProgram : public ShaderProgram {
+  public:
+    TrianglesShaderProgram();
+};
+
+class PointsAndLinesShaderProgram : public ShaderProgram {
+  public:
+    PointsAndLinesShaderProgram();
+};
+
 #endif // SHADER_HPP

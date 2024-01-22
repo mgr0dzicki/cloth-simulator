@@ -14,6 +14,7 @@
 #include <iostream>
 #include <stdexcept>
 #include <vector>
+#include "asset.hpp"
 
 using namespace std;
 using namespace glm;
@@ -215,4 +216,15 @@ void ShaderProgram::unuse() const {
 
 GLuint ShaderProgram::getHandle() const {
     return handle;
+}
+
+TrianglesShaderProgram::TrianglesShaderProgram()
+    : ShaderProgram({Shader(SHADER_DIR "/triangles.vert", GL_VERTEX_SHADER),
+                     Shader(SHADER_DIR "/triangles.frag", GL_FRAGMENT_SHADER),
+                     Shader(SHADER_DIR "/triangles.geom", GL_GEOMETRY_SHADER)}) {
+}
+
+PointsAndLinesShaderProgram::PointsAndLinesShaderProgram()
+    : ShaderProgram({Shader(SHADER_DIR "/pointsAndLines.vert", GL_VERTEX_SHADER),
+                     Shader(SHADER_DIR "/pointsAndLines.frag", GL_FRAGMENT_SHADER)}) {
 }

@@ -21,6 +21,7 @@ add_executable(cloth-simulator
   src/main.cpp
   src/Shader.cpp
   src/Cloth.cpp
+  src/Renderer.cpp
   src/Settings.cpp
   src/SettingsWindow.cpp
 )

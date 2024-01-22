@@ -15,18 +15,15 @@
 GLuint Cube::vbo = 0, Cube::ibo = 0, Cube::vao = 0;
 size_t Cube::indexSize = 0;
 
-Cube::Cube(glm::vec3 center, float a, ShaderProgram shaderProgram)
+Cube::Cube(glm::vec3 center, float a, ShaderProgram &shaderProgram)
     : shaderProgram(shaderProgram) {
     if (vbo == 0) {
         static const GLfloat vertpos[8][3] = {
-            {-1.0, -1.0, -1.0}, {-1.0, -1.0, 1.0},  {-1.0, 1.0, -1.0},
-            {-1.0, 1.0, 1.0},   {1.0, -1.0, -1.0},  {1.0, -1.0, 1.0},
+            {-1.0, -1.0, -1.0}, {-1.0, -1.0, 1.0}, {-1.0, 1.0, -1.0},
+            {-1.0, 1.0, 1.0},   {1.0, -1.0, -1.0}, {1.0, -1.0, 1.0},
             {1.0, 1.0, -1.0},   {1.0, 1.0, 1.0},
         };
-        GLubyte vertind[16] = {
-            0, 1, 2, 3, 6, 7, 4, 5,
-            0, 2, 4, 6, 5, 7, 1, 3
-        };
+        GLubyte vertind[16] = {0, 1, 2, 3, 6, 7, 4, 5, 0, 2, 4, 6, 5, 7, 1, 3};
 
         glGenVertexArrays(1, &vao);
         glBindVertexArray(vao);
@@ -57,9 +54,9 @@ void Cube::draw() {
 
     shaderProgram.setUniform("modelMatrix", modelMatrix);
 
-    glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE, (GLvoid*)0);
+    glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE, (GLvoid *)0);
     glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE,
-                   (GLvoid*)(8 * sizeof(GLubyte)));
+                   (GLvoid *)(8 * sizeof(GLubyte)));
 
     glCheckError(__FILE__, __LINE__);
 
@@ -121,18 +118,19 @@ void Link::update() {
 }
 
 Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
-             ShaderProgram shaderProgram)
-    : meshDrawer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
-                 shaderProgram) {
+             TrianglesShaderProgram &trianglesShaderProgram,
+             PointsAndLinesShaderProgram &pointsAndLinesShaderProgram)
+    : clothRenderer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
+                  trianglesShaderProgram),
+      meshRenderer(height + 1, width + 1, pointsAndLinesShaderProgram) {
     dx = dx / static_cast<float>(width);
     dy = dy / static_cast<float>(height);
     nodes.resize(height + 1);
     for (int y = 0; y <= height; ++y) {
-        nodes[y].resize(width + 1);
         for (int x = 0; x <= width; ++x) {
             glm::vec3 xx = dx * static_cast<float>(x);
             glm::vec3 yy = dy * static_cast<float>(y);
-            nodes[y][x] = Node(pos + xx + yy);
+            nodes[y].emplace_back(pos + xx + yy, glm::vec3(0));
         }
     }
 
@@ -155,15 +153,16 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
         }
     }
 
-    settings.registerSubdivisionStepsCallback([this, shaderProgram]() {
-        int n = nodes.size();
-        int m = nodes[0].size();
-        for (int i = 0; i < settings.subdivisionSteps; i++) {
-            n = n * 2 - 1;
-            m = m * 2 - 1;
-        }
-        meshDrawer = MeshDrawer(n, m, shaderProgram);
-    });
+    settings.registerSubdivisionStepsCallback(
+        [this, &trianglesShaderProgram]() {
+            int n = nodes.size();
+            int m = nodes[0].size();
+            for (int i = 0; i < settings.subdivisionSteps; i++) {
+                n = n * 2 - 1;
+                m = m * 2 - 1;
+            }
+            clothRenderer = ClothRenderer(n, m, trianglesShaderProgram);
+        });
 }
 
 void Cloth::update(float dt, float prevDt) {
@@ -202,60 +201,6 @@ void Cloth::update(float dt, float prevDt) {
             }
         }
     }
-}
-
-MeshDrawer::MeshDrawer(int n, int m, ShaderProgram shaderProgram)
-    : shaderProgram(shaderProgram) {
-    for (int y = 0; y < n - 1; ++y) {
-        for (int x = 0; x < m - 1; ++x) {
-            index.push_back((x + 0) + m * (y + 0));
-            index.push_back((x + 1) + m * (y + 1));
-            index.push_back((x + 1) + m * (y + 0));
-
-            index.push_back((x + 1) + m * (y + 1));
-            index.push_back((x + 0) + m * (y + 0));
-            index.push_back((x + 0) + m * (y + 1));
-        }
-    }
-
-    glGenVertexArrays(1, &vao);
-    glBindVertexArray(vao);
-    glGenBuffers(1, &vbo);
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
-
-    glGenBuffers(1, &ibo);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-    glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(GLuint),
-                 index.data(), GL_STATIC_DRAW);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-
-    glBindVertexArray(0);
-
-    glCheckError(__FILE__, __LINE__);
-}
-
-void MeshDrawer::draw(std::vector<std::vector<glm::vec3>> const &mesh) {
-    std::vector<glm::vec3> vertices;
-
-    for (auto &line : mesh)
-        for (auto &node : line)
-            vertices.push_back(node);
-
-    glBindVertexArray(vao);
-
-    glBindBuffer(GL_ARRAY_BUFFER, vbo);
-    glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3),
-                 vertices.data(), GL_STATIC_DRAW);
-    glCheckError(__FILE__, __LINE__);
-    shaderProgram.setUniform("modelMatrix", glm::mat4(1));
-
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-
-    glDrawElements(GL_TRIANGLES, index.size(), GL_UNSIGNED_INT, NULL);
-
-    glCheckError(__FILE__, __LINE__);
-    glBindVertexArray(0);
 }
 
 std::vector<std::vector<glm::vec3>>
@@ -349,5 +294,6 @@ void Cloth::draw() {
         }
     }
 
-    meshDrawer.draw(catmullClark(grid, settings.subdivisionSteps));
+    clothRenderer.render(catmullClark(grid, settings.subdivisionSteps));
+    meshRenderer.render(grid);
 }

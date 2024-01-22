@@ -28,10 +28,8 @@ class MyApplication : public Application {
     const int size = 30;
 
     // shader
-    Shader vertexShader;
-    Shader fragmentShader;
-    Shader geometryShader;
-    ShaderProgram shaderProgram;
+    TrianglesShaderProgram trianglesShaderProgram;
+    PointsAndLinesShaderProgram pointsAndLinesShaderProgram;
 
     // shader matrix uniform
     glm::mat4 viewProjectionMatrix;

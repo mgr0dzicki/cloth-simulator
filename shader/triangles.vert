@@ -6,7 +6,6 @@ out vec3 v_Position;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewProjectionMatrix;
-uniform vec4 eyePos;
 
 void main(void) {
   vec4 Pos;
