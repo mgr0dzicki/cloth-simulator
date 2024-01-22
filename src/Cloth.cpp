@@ -117,20 +117,20 @@ void Link::update() {
     b->position += off;
 }
 
-Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
+Cloth::Cloth(glm::vec3 pos, glm::vec3 _dx, glm::vec3 _dy, int width, int height,
              TrianglesShaderProgram &trianglesShaderProgram,
              PointsAndLinesShaderProgram &pointsAndLinesShaderProgram)
-    : clothRenderer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
-                  trianglesShaderProgram),
+    : pos(pos), dx(_dx / static_cast<float>(width)),
+      dy(_dy / static_cast<float>(height)),
+      clothRenderer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
+                    trianglesShaderProgram),
       meshRenderer(height + 1, width + 1, pointsAndLinesShaderProgram) {
-    dx = dx / static_cast<float>(width);
-    dy = dy / static_cast<float>(height);
     nodes.resize(height + 1);
     for (int y = 0; y <= height; ++y) {
         for (int x = 0; x <= width; ++x) {
             glm::vec3 xx = dx * static_cast<float>(x);
             glm::vec3 yy = dy * static_cast<float>(y);
-            nodes[y].emplace_back(pos + xx + yy, glm::vec3(0));
+            nodes[y].emplace_back(pos + xx + yy);
         }
     }
 
@@ -163,6 +163,17 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
             }
             clothRenderer = ClothRenderer(n, m, trianglesShaderProgram);
         });
+}
+
+void Cloth::reset() {
+    for (size_t y = 0; y < nodes.size(); ++y) {
+        for (size_t x = 0; x < nodes[y].size(); ++x) {
+            glm::vec3 xx = dx * static_cast<float>(x);
+            glm::vec3 yy = dy * static_cast<float>(y);
+            nodes[y][x].position = pos + xx + yy;
+            nodes[y][x].prevPosition = nodes[y][x].position;
+        }
+    }
 }
 
 void Cloth::update(float dt, float prevDt) {

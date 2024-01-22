@@ -13,9 +13,7 @@
 
 MyApplication::MyApplication()
     : Application("Cloth simulator"),
-      cloth(glm::vec3(-5.0, -5.0, 5.0), glm::vec3(10.0, 0.0, 0.0),
-            glm::vec3(0.0, 10.0, 0.0), size, size, trianglesShaderProgram,
-            pointsAndLinesShaderProgram) {
+      world(trianglesShaderProgram, pointsAndLinesShaderProgram) {
 
     glCheckError(__FILE__, __LINE__);
 
@@ -70,23 +68,9 @@ void MyApplication::loop() {
     glCheckError(__FILE__, __LINE__);
 
     // draw
-    cloth.update(dt, prevDt);
+    world.update(dt, prevDt);
     prevDeltaTime = dt;
-    cloth.draw();
+    world.draw();
 
     glCheckError(__FILE__, __LINE__);
-}
-
-void MyApplication::onMouseButton(int button, int action, int mods, double x,
-                                  double y) {
-    if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_PRESS) {
-        movingCloth = true;
-    } else if (button == GLFW_MOUSE_BUTTON_LEFT && action == GLFW_RELEASE) {
-        movingCloth = false;
-    }
-}
-
-void MyApplication::onMouseMove(double x, double y) {
-    if (movingCloth) {
-    }
 }

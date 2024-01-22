@@ -20,16 +20,15 @@ class Cube {
 
 class Node {
   public:
-    Node(glm::vec3 position, glm::vec3 velocity);
+    Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0.0));
     void update(float dt, float prevDt);
     void constrainBall(glm::vec3 center, float radius);
     void collide(Node &other);
 
     glm::vec3 position;
-
-  private:
     glm::vec3 prevPosition;
 
+  private:
     static constexpr float AIR_RESISTANCE = 0.01;
 };
 
@@ -52,10 +51,12 @@ class Cloth {
           PointsAndLinesShaderProgram &pointsAndLinesShaderProgram);
     void update(float dt, float prevDt);
     void draw();
+    void reset();
 
     constexpr static int SUBDIVISION_STEPS_MAX = 3;
 
   private:
+    glm::vec3 pos, dx, dy;
     std::vector<std::vector<Node>> nodes;
     std::vector<Link> regularLinks, diagonalLinks, farLinks;
     ClothRenderer clothRenderer;

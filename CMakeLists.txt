@@ -24,6 +24,7 @@ add_executable(cloth-simulator
   src/Renderer.cpp
   src/Settings.cpp
   src/SettingsWindow.cpp
+  src/World.cpp
 )
 
 set_property(TARGET cloth-simulator PROPERTY CXX_STANDARD 11)

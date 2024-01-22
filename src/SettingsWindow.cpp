@@ -11,7 +11,8 @@ void drawSettingsWindow(float dt) {
 
     ImGui::Begin("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("%.3f ms / frame", 1000.f * dt);
-    ImGui::Button("Reset animation");
+    if (ImGui::Button("Reset animation"))
+        settings.resetCallback();
 
     ImGui::Separator();
 
@@ -26,6 +27,13 @@ void drawSettingsWindow(float dt) {
                        (int)Settings::RenderMode::Triangles);
     ImGui::Spacing();
 
+    if (settings.renderMode == Settings::RenderMode::Triangles) {
+        if (ImGui::SliderInt("Subdivision steps", &settings.subdivisionSteps, 0,
+                             Cloth::SUBDIVISION_STEPS_MAX))
+            settings.subdivisionStepsCallback();
+        ImGui::Spacing();
+    }
+
     ImGui::Text("Links");
     ImGui::Checkbox("Regular", &settings.regularLinks);
     ImGui::SameLine();
@@ -35,12 +43,6 @@ void drawSettingsWindow(float dt) {
     ImGui::Spacing();
 
     ImGui::Checkbox("Cloth-cloth collision", &settings.clothClothCollision);
-    ImGui::Spacing();
-
-    if (ImGui::SliderInt("Subdivision steps", &settings.subdivisionSteps, 0,
-                         Cloth::SUBDIVISION_STEPS_MAX))
-        settings.subdivisionStepsCallback();
-
     ImGui::Spacing();
 
     if (ImGui::Button("Recommended"))
