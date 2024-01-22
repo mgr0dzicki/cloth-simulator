@@ -8,11 +8,12 @@
 
 class Renderer {
   public:
-    Renderer(ShaderProgram &ShaderProgram, glm::mat4 modelMatrix);
+    Renderer(ShaderProgram &ShaderProgram);
 
   protected:
     void setIndices(std::vector<GLuint> const &indices);
     void setVertices(std::vector<glm::vec3> const &vertices);
+    void setModelMatrix(glm::mat4 const &modelMatrix);
     void draw(GLenum mode);
     void draw(GLenum mode, int start, int count);
 
@@ -36,6 +37,12 @@ class MeshRenderer : public Renderer {
 
   private:
     int n, m;
+};
+
+class CuboidRenderer : public Renderer {
+  public:
+    CuboidRenderer(ShaderProgram &shaderProgram);
+    void render(glm::mat4 const &modelMatrix);
 };
 
 #endif // RENDERER_HPP

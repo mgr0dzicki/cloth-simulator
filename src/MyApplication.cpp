@@ -19,9 +19,9 @@ MyApplication::MyApplication()
     glCheckError(__FILE__, __LINE__);
 
     glm::mat4 projection =
-        glm::perspective(0.4f, getWindowRatio(), 0.1f, 100.f);
+        glm::perspective(0.5f, getWindowRatio(), 0.1f, 100.f);
     glm::mat4 view =
-        glm::lookAt(glm::vec3(20.0, 0.0, 20.0), glm::vec3(0.0, 0.0, 0.0),
+        glm::lookAt(glm::vec3(30.0, 0.0, 5.0), glm::vec3(0.0, 0.0, 0.0),
                     glm::vec3(0.0, 0.0, 1.0));
     viewProjectionMatrix = projection * view;
 

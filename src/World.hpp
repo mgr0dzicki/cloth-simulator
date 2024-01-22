@@ -13,6 +13,7 @@ class World {
 
   private:
     Cloth cloth;
+    std::vector<Solid *> solids;
 };
 
 #endif // WORLD_HPP

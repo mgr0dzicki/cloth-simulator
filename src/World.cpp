@@ -10,6 +10,11 @@ World::World(TrianglesShaderProgram &trianglesShaderProgram,
     settings.registerResetCallback([this]() {
         reset();
     });
+
+    solids.push_back(
+        new Cuboid(glm::vec3(-5.0, -7.0, -3.0), glm::vec3(7.0, 7.0, -2.5)));
+
+    Cuboid::initRenderer(trianglesShaderProgram);
 }
 
 void World::reset() {
@@ -22,4 +27,7 @@ void World::update(float dt, float prevDt) {
 
 void World::draw() {
     cloth.draw();
+    for (auto solid : solids) {
+        solid->draw();
+    }
 }

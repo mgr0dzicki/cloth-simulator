@@ -3,8 +3,8 @@
 #include "glError.hpp"
 #include <iostream>
 
-Renderer::Renderer(ShaderProgram &shaderProgram, glm::mat4 modelMatrix)
-    : shaderProgram(shaderProgram), modelMatrix(modelMatrix) {
+Renderer::Renderer(ShaderProgram &shaderProgram)
+    : shaderProgram(shaderProgram) {
     glGenVertexArrays(1, &vao);
     glBindVertexArray(vao);
     glGenBuffers(1, &vbo);
@@ -32,6 +32,10 @@ void Renderer::setVertices(std::vector<glm::vec3> const &vertices) {
     glBindVertexArray(0);
 }
 
+void Renderer::setModelMatrix(glm::mat4 const &modelMatrix) {
+    this->modelMatrix = modelMatrix;
+}
+
 void Renderer::draw(GLenum mode, int start, int count) {
     shaderProgram.use();
     shaderProgram.setUniform("modelMatrix", modelMatrix);
@@ -48,7 +52,7 @@ void Renderer::draw(GLenum mode) {
 }
 
 ClothRenderer::ClothRenderer(int n, int m, ShaderProgram &shaderProgram)
-    : Renderer(shaderProgram, glm::mat4(1.0)) {
+    : Renderer(shaderProgram) {
     std::vector<GLuint> index;
     for (int y = 0; y < n - 1; ++y) {
         for (int x = 0; x < m - 1; ++x) {
@@ -68,6 +72,7 @@ void ClothRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
     if (settings.renderMode != Settings::RenderMode::Triangles)
         return;
 
+    setModelMatrix(glm::mat4(1.0));
     std::vector<glm::vec3> vertices;
     for (auto const &row : mesh)
         for (auto const &vertex : row)
@@ -77,7 +82,7 @@ void ClothRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
 }
 
 MeshRenderer::MeshRenderer(int n, int m, ShaderProgram &shaderProgram)
-    : Renderer(shaderProgram, glm::mat4(1.0)), n(n), m(m) {
+    : Renderer(shaderProgram), n(n), m(m) {
     std::vector<GLuint> index;
 
     // points
@@ -118,6 +123,7 @@ void MeshRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
     if (settings.renderMode == Settings::RenderMode::Triangles)
         return;
 
+    setModelMatrix(glm::mat4(1.0));
     std::vector<glm::vec3> vertices;
     for (auto const &row : mesh)
         for (auto const &vertex : row)
@@ -135,4 +141,19 @@ void MeshRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
             draw(GL_LINES, n * m + 2 * (n * (m - 1) + m * (n - 1)),
                  4 * (n - 1) * (m - 1));
     }
+}
+
+CuboidRenderer::CuboidRenderer(ShaderProgram &shaderProgram)
+    : Renderer(shaderProgram) {
+    setIndices({0, 2, 1, 3, 5, 7, 4, 6, 1, 5, 0, 4, 2, 6, 3, 7});
+    setVertices({glm::vec3(-1, -1, -1), glm::vec3(-1, -1, 1),
+                 glm::vec3(-1, 1, -1), glm::vec3(-1, 1, 1),
+                 glm::vec3(1, -1, -1), glm::vec3(1, -1, 1), glm::vec3(1, 1, -1),
+                 glm::vec3(1, 1, 1)});
+}
+
+void CuboidRenderer::render(glm::mat4 const &modelMatrix) {
+    setModelMatrix(modelMatrix);
+    draw(GL_TRIANGLE_STRIP, 0, 8);
+    draw(GL_TRIANGLE_STRIP, 8, 8);
 }

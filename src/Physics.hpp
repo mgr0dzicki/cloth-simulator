@@ -6,18 +6,6 @@
 #include <glm/glm.hpp>
 #include <vector>
 
-class Cube {
-  public:
-    Cube(glm::vec3 center, float a, ShaderProgram &shaderProgram);
-    void draw();
-
-  private:
-    static GLuint vbo, ibo, vao;
-    static size_t indexSize;
-    glm::mat4 modelMatrix;
-    ShaderProgram &shaderProgram;
-};
-
 class Node {
   public:
     Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0.0));
@@ -30,6 +18,25 @@ class Node {
 
   private:
     static constexpr float AIR_RESISTANCE = 0.01;
+};
+
+class Solid {
+  public:
+    virtual void draw() = 0;
+    virtual void constrain(Node &node) = 0;
+};
+
+class Cuboid : public Solid {
+  public:
+    Cuboid(glm::vec3 a, glm::vec3 b);
+    void draw();
+    void constrain(Node &node);
+    static void initRenderer(ShaderProgram shaderProgram);
+
+  private:
+    static CuboidRenderer *renderer;
+    glm::vec3 a, b;
+    glm::mat4 modelMatrix;
 };
 
 class Link {

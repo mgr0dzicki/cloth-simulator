@@ -10,57 +10,25 @@
 
 // TODO: dac mozliwosc lapania myszka
 // TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
-// TODO: inne opcje renderowania
 
-GLuint Cube::vbo = 0, Cube::ibo = 0, Cube::vao = 0;
-size_t Cube::indexSize = 0;
+CuboidRenderer *Cuboid::renderer = nullptr;
 
-Cube::Cube(glm::vec3 center, float a, ShaderProgram &shaderProgram)
-    : shaderProgram(shaderProgram) {
-    if (vbo == 0) {
-        static const GLfloat vertpos[8][3] = {
-            {-1.0, -1.0, -1.0}, {-1.0, -1.0, 1.0}, {-1.0, 1.0, -1.0},
-            {-1.0, 1.0, 1.0},   {1.0, -1.0, -1.0}, {1.0, -1.0, 1.0},
-            {1.0, 1.0, -1.0},   {1.0, 1.0, 1.0},
-        };
-        GLubyte vertind[16] = {0, 1, 2, 3, 6, 7, 4, 5, 0, 2, 4, 6, 5, 7, 1, 3};
-
-        glGenVertexArrays(1, &vao);
-        glBindVertexArray(vao);
-        glGenBuffers(1, &vbo);
-        glBindBuffer(GL_ARRAY_BUFFER, vbo);
-        glBufferData(GL_ARRAY_BUFFER, sizeof(vertpos), vertpos, GL_STATIC_DRAW);
-        shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
-
-        glGenBuffers(1, &ibo);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertind), vertind,
-                     GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-        glBindVertexArray(0);
-
-        indexSize = sizeof(vertind) / sizeof(vertind[0]);
-
-        glCheckError(__FILE__, __LINE__);
-    }
-
-    modelMatrix = glm::translate(glm::mat4(1), center);
-    modelMatrix = glm::scale(modelMatrix, glm::vec3(a / 2.F));
+Cuboid::Cuboid(glm::vec3 a, glm::vec3 b) : a(a), b(b) {
+    glm::mat4 scale = glm::scale(glm::mat4(1.0), (b - a) / 2.0F);
+    glm::mat4 translate = glm::translate(glm::mat4(1.0), (a + b) / 2.0F);
+    modelMatrix = translate * scale;
 }
 
-void Cube::draw() {
-    glBindVertexArray(vao);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+void Cuboid::initRenderer(ShaderProgram shaderProgram) {
+    renderer = new CuboidRenderer(shaderProgram);
+}
 
-    shaderProgram.setUniform("modelMatrix", modelMatrix);
+void Cuboid::draw() {
+    renderer->render(modelMatrix);
+}
 
-    glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE, (GLvoid *)0);
-    glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE,
-                   (GLvoid *)(8 * sizeof(GLubyte)));
-
-    glCheckError(__FILE__, __LINE__);
-
-    glBindVertexArray(0);
+void Cuboid::constrain(Node &node) {
+    return;
 }
 
 const glm::vec3 G(0, 0, -9.81);
