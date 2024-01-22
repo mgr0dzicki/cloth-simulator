@@ -25,7 +25,7 @@ MyApplication::MyApplication()
 
     trianglesShaderProgram.use();
     trianglesShaderProgram.setUniform("lightPosition",
-                                      glm::vec4(2.0, 2.0, 8.0, 1.0));
+                                      glm::vec4(10.0, 2.0, 18.0, 1.0));
     trianglesShaderProgram.setUniform("lightDirection",
                                       glm::vec3(0.8, 0.8, 0.8));
     trianglesShaderProgram.setUniform("lightAmbient",
