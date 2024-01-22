@@ -174,7 +174,7 @@ void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
         for (auto &node : line)
             node.update(dt, prevDt);
 
-    for (int t = 0; t < 3; t++) {
+    for (int t = 0; t < 4; t++) {
         if (settings.regularLinks)
             for (auto &link : regularLinks)
                 link.update();
