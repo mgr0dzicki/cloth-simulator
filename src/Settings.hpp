@@ -42,9 +42,11 @@ class Settings {
     };
     std::function<void()> resetCallback = [] {
     };
-    std::function<void()> freezeCallback = [] {
+    std::function<void()> freezeCallback = [this] {
+        frozen = true;
     };
-    std::function<void()> unfreezeCallback = [] {
+    std::function<void()> unfreezeCallback = [this] {
+        frozen = false;
     };
 };
 

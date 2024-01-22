@@ -62,3 +62,17 @@ void Settings::registerSubdivisionStepsCallback(
 void Settings::registerResetCallback(std::function<void()> callback) {
     resetCallback = callback;
 }
+
+void Settings::registerFreezeCallback(std::function<void()> callback) {
+    freezeCallback = [this, callback] {
+        frozen = true;
+        callback();
+    };
+}
+
+void Settings::registerUnfreezeCallback(std::function<void()> callback) {
+    unfreezeCallback = [this, callback] {
+        frozen = false;
+        callback();
+    };
+}
