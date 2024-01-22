@@ -94,8 +94,7 @@ void Node::update(float dt, float prevDt) {
     }
 
     glm::vec3 tmp = position;
-    position +=
-        (1.0F - AIR_RESISTANCE) * dp; // TODO: zeby dzialalo dla malego dt
+    position += dp;
     prevPosition = tmp;
 }
 

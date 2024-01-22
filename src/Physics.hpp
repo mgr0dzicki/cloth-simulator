@@ -14,9 +14,6 @@ class Node {
 
     glm::vec3 position;
     glm::vec3 prevPosition;
-
-  private:
-    static constexpr float AIR_RESISTANCE = 0.01;
 };
 
 class Solid {
