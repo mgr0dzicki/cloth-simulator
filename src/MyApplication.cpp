@@ -7,6 +7,7 @@
 #include <iostream>
 #include <vector>
 
+#include "Settings.hpp"
 #include "SettingsWindow.hpp"
 #include "asset.hpp"
 #include "glError.hpp"
@@ -68,8 +69,10 @@ void MyApplication::loop() {
     glCheckError(__FILE__, __LINE__);
 
     // draw
-    world.update(dt, prevDt);
-    prevDeltaTime = dt;
+    if (!settings.frozen) {
+        world.update(dt, prevDt);
+        prevDeltaTime = dt;
+    }
     world.draw();
 
     glCheckError(__FILE__, __LINE__);

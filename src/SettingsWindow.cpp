@@ -11,8 +11,16 @@ void drawSettingsWindow(float dt) {
 
     ImGui::Begin("Settings", NULL, ImGuiWindowFlags_AlwaysAutoResize);
     ImGui::Text("%.3f ms / frame", 1000.f * dt);
-    if (ImGui::Button("Reset animation"))
+    if (ImGui::Button("Reset"))
         settings.resetCallback();
+    ImGui::SameLine();
+    if (settings.frozen) {
+        if (ImGui::Button("Unfreeze"))
+            settings.unfreezeCallback();
+    } else {
+        if (ImGui::Button("Freeze"))
+            settings.freezeCallback();
+    }
 
     ImGui::Separator();
 

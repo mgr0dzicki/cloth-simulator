@@ -1,5 +1,5 @@
-#ifndef CLOTH_HPP
-#define CLOTH_HPP
+#ifndef PHYSICS_HPP
+#define PHYSICS_HPP
 
 #include "Renderer.hpp"
 #include "Shader.hpp"
@@ -65,4 +65,4 @@ class Cloth {
     constexpr static int SUBDIVISION_MESH_SIZE_MAX = 241;
 };
 
-#endif // CLOTH_HPP
+#endif // PHYSICS_HPP

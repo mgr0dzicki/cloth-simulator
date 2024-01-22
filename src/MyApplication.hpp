@@ -10,7 +10,7 @@
 #define MYAPPLICATION_HPP
 
 #include "Application.hpp"
-#include "Cloth.hpp"
+#include "Physics.hpp"
 #include "SettingsWindow.hpp"
 #include "Shader.hpp"
 #include "World.hpp"

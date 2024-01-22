@@ -20,7 +20,7 @@ add_executable(cloth-simulator
   src/glError.cpp
   src/main.cpp
   src/Shader.cpp
-  src/Cloth.cpp
+  src/Physics.cpp
   src/Renderer.cpp
   src/Settings.cpp
   src/SettingsWindow.cpp
