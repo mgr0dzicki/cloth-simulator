@@ -10,7 +10,6 @@ class Node {
   public:
     Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0.0));
     void update(float dt, float prevDt);
-    void constrainBall(glm::vec3 center, float radius);
     void collide(Node &other, float radius);
 
     glm::vec3 position;
@@ -36,6 +35,19 @@ class Cuboid : public Solid {
   private:
     static CuboidRenderer *renderer;
     glm::vec3 a, b, colour;
+    glm::mat4 modelMatrix;
+};
+
+class Ball : public Solid {
+  public:
+    Ball(glm::vec3 center, float radius, glm::vec3 colour);
+    void draw();
+    void constrain(Node &node);
+
+  private:
+    glm::vec3 center;
+    float radius;
+    glm::vec3 colour;
     glm::mat4 modelMatrix;
 };
 

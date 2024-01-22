@@ -28,10 +28,10 @@ World::World(TrianglesShaderProgram &trianglesShaderProgram,
                                 glm::vec3(7.0, 7.0, -2.5),   // b
                                 glm::vec3(0.15, 0.1, 0.1)    // colour
                                 ));
-    solids.push_back(new Cuboid(glm::vec3(-1.0, -1.0, -1.0), // a
-                                glm::vec3(1.0, 1.0, 1.0),    // b
-                                glm::vec3(0.1, 0.1, 0.15)    // colour
-                                ));
+    solids.push_back(new Ball(glm::vec3(0.0, 0.0, 0.0), // center
+                              1.0,                     // radius
+                              glm::vec3(0.1, 0.1, 0.1) // colour
+                              ));
 
     Cuboid::initRenderer(trianglesShaderProgram);
 }

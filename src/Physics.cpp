@@ -5,9 +5,9 @@
 #include "glError.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <future>
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
-#include <future>
 
 // TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
 
@@ -55,6 +55,26 @@ void Cuboid::constrain(Node &node) {
     node.prevPosition = minPos;
 }
 
+Ball::Ball(glm::vec3 center, float radius, glm::vec3 colour)
+    : center(center), radius(radius), colour(colour) {
+    glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(radius));
+    glm::mat4 translate = glm::translate(glm::mat4(1.0), center);
+    modelMatrix = translate * scale;
+}
+
+void Ball::draw() {
+    // renderer->render(colour, modelMatrix);
+}
+
+void Ball::constrain(Node &node) {
+    glm::vec3 diff = node.position - center;
+    float len = glm::length(diff);
+    if (len < radius) {
+        node.position += diff * (radius - len) / len;
+        node.prevPosition = node.position;
+    }
+}
+
 const glm::vec3 G(0, 0, -9.81);
 
 Node::Node(glm::vec3 position, glm::vec3 velocity)
@@ -82,17 +102,6 @@ void Node::collide(Node &other, float radius) {
     glm::vec3 off = diff * perc;
     position -= off;
     other.position += off;
-}
-
-// quite poor one...
-void Node::constrainBall(glm::vec3 center, float radius) {
-    glm::vec3 diff = position - center;
-    float len = glm::length(diff);
-    if (len < radius) {
-        position += diff * (radius - len) / len;
-        prevPosition = position;
-        // position = prevPosition;
-    }
 }
 
 Link::Link(Node *a, Node *b)
@@ -177,10 +186,15 @@ void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
             float radius = std::min(glm::length(dx), glm::length(dy)) * 1.15F;
 
             auto collide = [&](int istart, int kstart, int jstart, int lstart) {
-                for (int i = istart; i < static_cast<int>(nodes.size()); i += 2) {
-                    for (int j = jstart; j < static_cast<int>(nodes[i].size()); j += 2) {
-                        for (int k = kstart; k < static_cast<int>(nodes.size()); k += 2) {
-                            for (int l = lstart; l < static_cast<int>(nodes[k].size()); l += 2) {
+                for (int i = istart; i < static_cast<int>(nodes.size());
+                     i += 2) {
+                    for (int j = jstart; j < static_cast<int>(nodes[i].size());
+                         j += 2) {
+                        for (int k = kstart; k < static_cast<int>(nodes.size());
+                             k += 2) {
+                            for (int l = lstart;
+                                 l < static_cast<int>(nodes[k].size());
+                                 l += 2) {
                                 if (abs(i - k) > 1 || abs(j - l) > 1)
                                     nodes[i][j].collide(nodes[k][l], radius);
                             }
