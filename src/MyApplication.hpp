@@ -23,8 +23,6 @@ class MyApplication : public Application {
     virtual void loop();
 
   private:
-    const int size = 30;
-
     // shader
     TrianglesShaderProgram trianglesShaderProgram;
     PointsAndLinesShaderProgram pointsAndLinesShaderProgram;
