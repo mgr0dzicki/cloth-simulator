@@ -29,7 +29,30 @@ void Cuboid::draw() {
 }
 
 void Cuboid::constrain(Node &node) {
-    return;
+    static const float eps = 0.03F;
+    auto pos = node.position;
+    if (pos.x < a.x - eps || pos.x > b.x + eps || pos.y < a.y - eps || pos.y > b.y + eps ||
+        pos.z < a.z - eps || pos.z > b.z + eps)
+        return;
+
+    auto candidates = {
+        glm::vec3(a.x - eps, pos.y, pos.z), glm::vec3(b.x + eps, pos.y, pos.z),
+        glm::vec3(pos.x, a.y - eps, pos.z), glm::vec3(pos.x, b.y + eps, pos.z),
+        glm::vec3(pos.x, pos.y, a.z - eps), glm::vec3(pos.x, pos.y, b.z + eps),
+    };
+
+    float minDist = 1e9;
+    glm::vec3 minPos;
+    for (auto candidate : candidates) {
+        float dist = glm::length(candidate - pos);
+        if (dist < minDist) {
+            minDist = dist;
+            minPos = candidate;
+        }
+    }
+
+    node.position = minPos;
+    node.prevPosition = minPos;
 }
 
 const glm::vec3 G(0, 0, -9.81);
@@ -149,7 +172,7 @@ void Cloth::reset() {
     }
 }
 
-void Cloth::update(float dt, float prevDt, std::vector<Solid*> const &solids) {
+void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
     for (auto &line : nodes)
         for (auto &node : line)
             node.update(dt, prevDt);
@@ -167,9 +190,9 @@ void Cloth::update(float dt, float prevDt, std::vector<Solid*> const &solids) {
             for (auto &link : farLinks)
                 link.update();
 
-        for (auto &line : nodes)
-            for (auto &node : line)
-                node.constrainBall(glm::vec3(0, 0, 2), 1.0);
+        // for (auto &line : nodes)
+        //     for (auto &node : line)
+        //         node.constrainBall(glm::vec3(0, 0, 2), 1.0);
 
         for (auto solid : solids)
             for (auto &line : nodes)
