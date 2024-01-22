@@ -8,7 +8,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
-// TODO: dac mozliwosc lapania myszka
 // TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
 
 CuboidRenderer *Cuboid::renderer = nullptr;
