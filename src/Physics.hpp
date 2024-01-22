@@ -43,8 +43,10 @@ class Ball : public Solid {
     Ball(glm::vec3 center, float radius, glm::vec3 colour);
     void draw();
     void constrain(Node &node);
+    static void initRenderer(ShaderProgram shaderProgram);
 
   private:
+    static BallRenderer *renderer;
     glm::vec3 center;
     float radius;
     glm::vec3 colour;

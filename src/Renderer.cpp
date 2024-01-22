@@ -176,3 +176,39 @@ void CuboidRenderer::render(glm::vec3 colour, glm::mat4 const &modelMatrix) {
     draw(GL_TRIANGLE_STRIP, 0, 8);
     draw(GL_TRIANGLE_STRIP, 8, 8);
 }
+
+BallRenderer::BallRenderer(ShaderProgram &shaderProgram)
+    : Renderer(shaderProgram) {
+    std::vector<glm::vec3> vertices;
+    std::vector<GLuint> index;
+    for (int i = 0; i < N; ++i) {
+        float theta = 2 * M_PI * i / N;
+        for (int j = 0; j < N; ++j) {
+            float phi = M_PI * j / N;
+            vertices.push_back(glm::vec3(sin(phi) * cos(theta),
+                                         sin(phi) * sin(theta), cos(phi)));
+        }
+    }
+    for (int i = 0; i < N; ++i) {
+        for (int j = 0; j < N; ++j) {
+            // triangle
+            index.push_back(i * N + j);
+            index.push_back(i * N + (j + 1) % N);
+            index.push_back(((i + 1) % N) * N + j);
+
+            // triangle
+            index.push_back(i * N + (j + 1) % N);
+            index.push_back(((i + 1) % N) * N + (j + 1) % N);
+            index.push_back(((i + 1) % N) * N + j);
+        }
+    }
+    setIndices(index);
+    setVertices(vertices);
+}
+
+void BallRenderer::render(glm::vec3 colour, glm::mat4 const &modelMatrix) {
+    setModelMatrix(modelMatrix);
+    setColour(colour);
+    setBackColour(colour);
+    draw(GL_TRIANGLES);
+}

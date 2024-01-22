@@ -54,4 +54,13 @@ class CuboidRenderer : public Renderer {
     void render(glm::vec3 colour, glm::mat4 const &modelMatrix);
 };
 
+class BallRenderer : public Renderer {
+  public:
+    BallRenderer(ShaderProgram &shaderProgram);
+    void render(glm::vec3 colour, glm::mat4 const &modelMatrix);
+
+  private:
+    static constexpr int N = 50;
+};
+
 #endif // RENDERER_HPP

@@ -9,6 +9,8 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
+const float COLLISION_EPS = 0.075F;
+
 CuboidRenderer *Cuboid::renderer = nullptr;
 
 Cuboid::Cuboid(glm::vec3 a, glm::vec3 b, glm::vec3 colour)
@@ -27,7 +29,7 @@ void Cuboid::draw() {
 }
 
 void Cuboid::constrain(Node &node) {
-    static const float eps = 0.03F;
+    static const float eps = COLLISION_EPS;
     auto pos = node.position;
     if (pos.x < a.x - eps || pos.x > b.x + eps || pos.y < a.y - eps ||
         pos.y > b.y + eps || pos.z < a.z - eps || pos.z > b.z + eps)
@@ -53,6 +55,8 @@ void Cuboid::constrain(Node &node) {
     node.prevPosition = minPos;
 }
 
+BallRenderer *Ball::renderer = nullptr;
+
 Ball::Ball(glm::vec3 center, float radius, glm::vec3 colour)
     : center(center), radius(radius), colour(colour) {
     glm::mat4 scale = glm::scale(glm::mat4(1.0), glm::vec3(radius));
@@ -60,15 +64,19 @@ Ball::Ball(glm::vec3 center, float radius, glm::vec3 colour)
     modelMatrix = translate * scale;
 }
 
+void Ball::initRenderer(ShaderProgram shaderProgram) {
+    renderer = new BallRenderer(shaderProgram);
+}
+
 void Ball::draw() {
-    // renderer->render(colour, modelMatrix);
+    renderer->render(colour, modelMatrix);
 }
 
 void Ball::constrain(Node &node) {
     glm::vec3 diff = node.position - center;
     float len = glm::length(diff);
-    if (len < radius) {
-        node.position += diff * (radius - len) / len;
+    if (len < radius + COLLISION_EPS) {
+        node.position += diff * (radius + COLLISION_EPS - len) / len;
         node.prevPosition = node.position;
     }
 }
