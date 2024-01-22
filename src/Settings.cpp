@@ -56,9 +56,9 @@ void Settings::setAllDisabled() {
 
 void Settings::registerSubdivisionStepsCallback(
     std::function<void()> callback) {
-    subdivisionStepsCallbacks.push_back(callback);
+    subdivisionStepsCallback = callback;
 }
 
 void Settings::registerResetCallback(std::function<void()> callback) {
-    resetCallbacks.push_back(callback);
+    resetCallback = callback;
 }

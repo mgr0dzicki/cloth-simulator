@@ -38,33 +38,14 @@ class Settings {
     void registerFreezeCallback(std::function<void()> callback);
     void registerUnfreezeCallback(std::function<void()> callback);
 
-    const std::function<void()> subdivisionStepsCallback = [this]() {
-        for (auto &callback : subdivisionStepsCallbacks)
-            callback();
+    std::function<void()> subdivisionStepsCallback = [] {
     };
-
-    const std::function<void()> resetCallback = [this]() {
-        for (auto &callback : resetCallbacks)
-            callback();
+    std::function<void()> resetCallback = [] {
     };
-
-    const std::function<void()> freezeCallback = [this]() {
-        frozen = true;
-        for (auto &callback : freezeCallbacks)
-            callback();
+    std::function<void()> freezeCallback = [] {
     };
-
-    const std::function<void()> unfreezeCallback = [this]() {
-        frozen = false;
-        for (auto &callback : unfreezeCallbacks)
-            callback();
+    std::function<void()> unfreezeCallback = [] {
     };
-
-  private:
-    std::vector<std::function<void()>> subdivisionStepsCallbacks;
-    std::vector<std::function<void()>> resetCallbacks;
-    std::vector<std::function<void()>> freezeCallbacks;
-    std::vector<std::function<void()>> unfreezeCallbacks;
 };
 
 extern Settings settings;
