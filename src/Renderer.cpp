@@ -48,7 +48,9 @@ void Renderer::draw(GLenum mode, int start, int count) {
     shaderProgram.use();
     shaderProgram.setUniform("modelMatrix", modelMatrix);
     shaderProgram.setUniform("frontColour", colour);
-    shaderProgram.setUniform("backColour", backColour);
+    if (mode == GL_TRIANGLES || mode == GL_TRIANGLE_STRIP ||
+        mode == GL_TRIANGLE_FAN)
+        shaderProgram.setUniform("backColour", backColour);
     glBindVertexArray(vao);
     glDrawElements(mode, count, GL_UNSIGNED_INT,
                    reinterpret_cast<void *>(start * sizeof(GLuint)));
