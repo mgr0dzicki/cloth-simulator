@@ -5,6 +5,18 @@
 #include <glm/glm.hpp>
 #include <vector>
 
+class Cube {
+  public:
+    Cube(glm::vec3 center, float a, ShaderProgram shaderProgram);
+    void draw();
+
+  private:
+    static GLuint vbo, ibo, vao;
+    static size_t indexSize;
+    glm::mat4 modelMatrix;
+    ShaderProgram shaderProgram;
+};
+
 class Node {
   public:
     Node() = default;

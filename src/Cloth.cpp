@@ -5,11 +5,66 @@
 #include "glError.hpp"
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
+#include <glm/gtc/matrix_transform.hpp>
 #include <iostream>
 
 // TODO: dac mozliwosc lapania myszka
 // TODO: dac mozliwosc zmiany rozmiaru siatki? -> to wymaga resetu
 // TODO: inne opcje renderowania
+
+GLuint Cube::vbo = 0, Cube::ibo = 0, Cube::vao = 0;
+size_t Cube::indexSize = 0;
+
+Cube::Cube(glm::vec3 center, float a, ShaderProgram shaderProgram)
+    : shaderProgram(shaderProgram) {
+    if (vbo == 0) {
+        static const GLfloat vertpos[8][3] = {
+            {-1.0, -1.0, -1.0}, {-1.0, -1.0, 1.0},  {-1.0, 1.0, -1.0},
+            {-1.0, 1.0, 1.0},   {1.0, -1.0, -1.0},  {1.0, -1.0, 1.0},
+            {1.0, 1.0, -1.0},   {1.0, 1.0, 1.0},
+        };
+        GLubyte vertind[16] = {
+            0, 1, 2, 3, 6, 7, 4, 5,
+            0, 2, 4, 6, 5, 7, 1, 3
+        };
+
+        glGenVertexArrays(1, &vao);
+        glBindVertexArray(vao);
+        glGenBuffers(1, &vbo);
+        glBindBuffer(GL_ARRAY_BUFFER, vbo);
+        glBufferData(GL_ARRAY_BUFFER, sizeof(vertpos), vertpos, GL_STATIC_DRAW);
+        shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
+
+        glGenBuffers(1, &ibo);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, sizeof(vertind), vertind,
+                     GL_STATIC_DRAW);
+        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        glBindVertexArray(0);
+
+        indexSize = sizeof(vertind) / sizeof(vertind[0]);
+
+        glCheckError(__FILE__, __LINE__);
+    }
+
+    modelMatrix = glm::translate(glm::mat4(1), center);
+    modelMatrix = glm::scale(modelMatrix, glm::vec3(a / 2.F));
+}
+
+void Cube::draw() {
+    glBindVertexArray(vao);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
+
+    shaderProgram.setUniform("modelMatrix", modelMatrix);
+
+    glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE, (GLvoid*)0);
+    glDrawElements(GL_TRIANGLE_STRIP, 8, GL_UNSIGNED_BYTE,
+                   (GLvoid*)(8 * sizeof(GLubyte)));
+
+    glCheckError(__FILE__, __LINE__);
+
+    glBindVertexArray(0);
+}
 
 const glm::vec3 G(0, 0, -9.81);
 
@@ -24,7 +79,8 @@ void Node::update(float dt, float prevDt) { // TODO: sprobowac zalozyc dt=prevDt
     }
 
     glm::vec3 tmp = position;
-    position += (1.0F - AIR_RESISTANCE) * dp; // TODO: zeby dzialalo dla malego dt
+    position +=
+        (1.0F - AIR_RESISTANCE) * dp; // TODO: zeby dzialalo dla malego dt
     prevPosition = tmp;
 }
 
@@ -163,13 +219,18 @@ MeshDrawer::MeshDrawer(int n, int m, ShaderProgram shaderProgram)
     }
 
     glGenVertexArrays(1, &vao);
+    glBindVertexArray(vao);
     glGenBuffers(1, &vbo);
+    glBindBuffer(GL_ARRAY_BUFFER, vbo);
+    shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
 
     glGenBuffers(1, &ibo);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER, index.size() * sizeof(GLuint),
                  index.data(), GL_STATIC_DRAW);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+
+    glBindVertexArray(0);
 
     glCheckError(__FILE__, __LINE__);
 }
@@ -187,7 +248,6 @@ void MeshDrawer::draw(std::vector<std::vector<glm::vec3>> const &mesh) {
     glBufferData(GL_ARRAY_BUFFER, vertices.size() * sizeof(glm::vec3),
                  vertices.data(), GL_STATIC_DRAW);
     glCheckError(__FILE__, __LINE__);
-    shaderProgram.setAttribute("in_Position", 3, sizeof(glm::vec3), 0);
     shaderProgram.setUniform("modelMatrix", glm::mat4(1));
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, ibo);
