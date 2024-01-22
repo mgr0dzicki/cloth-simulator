@@ -1,12 +1,14 @@
 #version 420
 
 in FVertex {
-  vec3 Colour;
   vec3 Position;
   vec3 Normal;
 } In;
 
 out vec4 out_Colour;
+
+uniform vec3 frontColour;
+uniform vec3 backColour;
 
 uniform mat4 modelMatrix;
 uniform mat4 viewProjectionMatrix;
@@ -42,24 +44,33 @@ vec3 LambertLighting ( void )
   uint  i, mask;
 
   normal = normalize ( In.Normal );
+
+  vec3 col;
+  if (gl_FrontFacing) {
+    col = frontColour;
+    normal = -normal;
+  } else {
+    col = backColour;
+  }
+
   vv = posDifference ( eyePos, In.Position, dist );
 
   Colour = vec3(0.0);
-  Colour += lightAmbient * In.Colour;
+  Colour += lightAmbient * col;
   lv = posDifference ( lightPosition, In.Position, dist );
   d = dot ( lv, normal );
   if ( dot ( vv, normal ) > 0.0 ) {
     if ( d > 0.0 ) {
       if ( lightPosition.w != 0.0 )
         d *= attFactor ( lightAttenuation, dist );
-      Colour += (d * lightDirection) * In.Colour;
+      Colour += (d * lightDirection) * col;
     }
   }
   else {
     if ( d < 0.0 ) {
       if ( lightPosition.w != 0.0 )
         d *= attFactor ( lightAttenuation, dist );
-      Colour -= (d * lightDirection) * In.Colour;
+      Colour -= (d * lightDirection) * col;
     }
   }
   return clamp ( Colour, 0.0, 1.0 );

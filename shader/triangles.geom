@@ -6,7 +6,6 @@ layout(triangle_strip,max_vertices=3) out;
 in vec3 v_Position[];
 
 out FVertex {
-  vec3 Colour;
   vec3 Position;
   vec3 Normal;
 } Out;
@@ -23,10 +22,8 @@ void main ( void )
     gl_Position = gl_in[i].gl_Position;
     Out.Position = v_Position[i];
     Out.Normal = nv;
-    // Out.Colour = In[i].Colour;
-    // Out.Colour = nv;
-    Out.Colour = vec3(1., 1., 1.);
     EmitVertex ();
   }
+
   EndPrimitive ();
 } /*main*/

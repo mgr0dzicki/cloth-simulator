@@ -12,7 +12,7 @@ class World {
     void draw();
 
   private:
-    Cloth cloth;
+    Cloth *cloth;
     std::vector<Solid *> solids;
 };
 

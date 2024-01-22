@@ -13,7 +13,8 @@
 
 CuboidRenderer *Cuboid::renderer = nullptr;
 
-Cuboid::Cuboid(glm::vec3 a, glm::vec3 b) : a(a), b(b) {
+Cuboid::Cuboid(glm::vec3 a, glm::vec3 b, glm::vec3 colour)
+    : a(a), b(b), colour(colour) {
     glm::mat4 scale = glm::scale(glm::mat4(1.0), (b - a) / 2.0F);
     glm::mat4 translate = glm::translate(glm::mat4(1.0), (a + b) / 2.0F);
     modelMatrix = translate * scale;
@@ -24,7 +25,7 @@ void Cuboid::initRenderer(ShaderProgram shaderProgram) {
 }
 
 void Cuboid::draw() {
-    renderer->render(modelMatrix);
+    renderer->render(colour, modelMatrix);
 }
 
 void Cuboid::constrain(Node &node) {
@@ -86,13 +87,16 @@ void Link::update() {
 }
 
 Cloth::Cloth(glm::vec3 pos, glm::vec3 _dx, glm::vec3 _dy, int width, int height,
+             glm::vec3 nodesColour, glm::vec3 linksColour,
+             glm::vec3 frontColour, glm::vec3 backColour,
              TrianglesShaderProgram &trianglesShaderProgram,
              PointsAndLinesShaderProgram &pointsAndLinesShaderProgram)
     : pos(pos), dx(_dx / static_cast<float>(width)),
       dy(_dy / static_cast<float>(height)),
       clothRenderer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
-                    trianglesShaderProgram),
-      meshRenderer(height + 1, width + 1, pointsAndLinesShaderProgram) {
+                    frontColour, backColour, trianglesShaderProgram),
+      meshRenderer(height + 1, width + 1, nodesColour, linksColour,
+                   pointsAndLinesShaderProgram) {
     nodes.resize(height + 1);
     for (int y = 0; y <= height; ++y) {
         for (int x = 0; x <= width; ++x) {
@@ -122,14 +126,15 @@ Cloth::Cloth(glm::vec3 pos, glm::vec3 _dx, glm::vec3 _dy, int width, int height,
     }
 
     settings.registerSubdivisionStepsCallback(
-        [this, &trianglesShaderProgram]() {
+        [this, frontColour, backColour, &trianglesShaderProgram]() {
             int n = nodes.size();
             int m = nodes[0].size();
             for (int i = 0; i < settings.subdivisionSteps; i++) {
                 n = n * 2 - 1;
                 m = m * 2 - 1;
             }
-            clothRenderer = ClothRenderer(n, m, trianglesShaderProgram);
+            clothRenderer = ClothRenderer(n, m, frontColour, backColour,
+                                          trianglesShaderProgram);
         });
 }
 

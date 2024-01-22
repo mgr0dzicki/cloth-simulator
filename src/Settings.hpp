@@ -2,6 +2,7 @@
 #define SETTINGS_HPP
 
 #include "Physics.hpp"
+#include <glm/glm.hpp>
 #include <functional>
 #include <vector>
 

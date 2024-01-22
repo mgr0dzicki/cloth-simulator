@@ -28,14 +28,14 @@ class Solid {
 
 class Cuboid : public Solid {
   public:
-    Cuboid(glm::vec3 a, glm::vec3 b);
+    Cuboid(glm::vec3 a, glm::vec3 b, glm::vec3 colour);
     void draw();
     void constrain(Node &node);
     static void initRenderer(ShaderProgram shaderProgram);
 
   private:
     static CuboidRenderer *renderer;
-    glm::vec3 a, b;
+    glm::vec3 a, b, colour;
     glm::mat4 modelMatrix;
 };
 
@@ -54,7 +54,8 @@ class Link {
 class Cloth {
   public:
     Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
-          TrianglesShaderProgram &trianglesShaderProgram,
+          glm::vec3 nodesColour, glm::vec3 linksColour, glm::vec3 frontColour,
+          glm::vec3 backColour, TrianglesShaderProgram &trianglesShaderProgram,
           PointsAndLinesShaderProgram &pointsAndLinesShaderProgram);
     void update(float dt, float prevDt);
     void draw();

@@ -36,9 +36,19 @@ void Renderer::setModelMatrix(glm::mat4 const &modelMatrix) {
     this->modelMatrix = modelMatrix;
 }
 
+void Renderer::setColour(glm::vec3 const &colour) {
+    this->colour = colour;
+}
+
+void Renderer::setBackColour(glm::vec3 const &colour) {
+    this->backColour = colour;
+}
+
 void Renderer::draw(GLenum mode, int start, int count) {
     shaderProgram.use();
     shaderProgram.setUniform("modelMatrix", modelMatrix);
+    shaderProgram.setUniform("frontColour", colour);
+    shaderProgram.setUniform("backColour", backColour);
     glBindVertexArray(vao);
     glDrawElements(mode, count, GL_UNSIGNED_INT,
                    reinterpret_cast<void *>(start * sizeof(GLuint)));
@@ -51,17 +61,19 @@ void Renderer::draw(GLenum mode) {
     draw(mode, 0, indexSize);
 }
 
-ClothRenderer::ClothRenderer(int n, int m, ShaderProgram &shaderProgram)
-    : Renderer(shaderProgram) {
+ClothRenderer::ClothRenderer(int n, int m, glm::vec3 frontColour,
+                             glm::vec3 backColour, ShaderProgram &shaderProgram)
+    : Renderer(shaderProgram), frontColour(frontColour),
+      backColour(backColour) {
     std::vector<GLuint> index;
     for (int y = 0; y < n - 1; ++y) {
         for (int x = 0; x < m - 1; ++x) {
             index.push_back((x + 0) + m * (y + 0));
-            index.push_back((x + 1) + m * (y + 1));
             index.push_back((x + 1) + m * (y + 0));
-
             index.push_back((x + 1) + m * (y + 1));
+
             index.push_back((x + 0) + m * (y + 0));
+            index.push_back((x + 1) + m * (y + 1));
             index.push_back((x + 0) + m * (y + 1));
         }
     }
@@ -73,6 +85,8 @@ void ClothRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
         return;
 
     setModelMatrix(glm::mat4(1.0));
+    setColour(frontColour);
+    setBackColour(backColour);
     std::vector<glm::vec3> vertices;
     for (auto const &row : mesh)
         for (auto const &vertex : row)
@@ -81,8 +95,10 @@ void ClothRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
     draw(GL_TRIANGLES);
 }
 
-MeshRenderer::MeshRenderer(int n, int m, ShaderProgram &shaderProgram)
-    : Renderer(shaderProgram), n(n), m(m) {
+MeshRenderer::MeshRenderer(int n, int m, glm::vec3 nodesColour,
+                           glm::vec3 linksColour, ShaderProgram &shaderProgram)
+    : Renderer(shaderProgram), n(n), m(m), nodesColour(nodesColour),
+      linksColour(linksColour) {
     std::vector<GLuint> index;
 
     // points
@@ -124,6 +140,7 @@ void MeshRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
         return;
 
     setModelMatrix(glm::mat4(1.0));
+    setColour(nodesColour);
     std::vector<glm::vec3> vertices;
     for (auto const &row : mesh)
         for (auto const &vertex : row)
@@ -133,6 +150,7 @@ void MeshRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
     draw(GL_POINTS, 0, n * m);
 
     if (settings.renderMode == Settings::RenderMode::Lines) {
+        setColour(linksColour);
         glLineWidth(1.F);
 
         if (settings.regularLinks)
@@ -145,15 +163,16 @@ void MeshRenderer::render(std::vector<std::vector<glm::vec3>> const &mesh) {
 
 CuboidRenderer::CuboidRenderer(ShaderProgram &shaderProgram)
     : Renderer(shaderProgram) {
-    setIndices({0, 2, 1, 3, 5, 7, 4, 6, 1, 5, 0, 4, 2, 6, 3, 7});
+    setIndices({0, 1, 2, 3, 6, 7, 4, 5, 0, 2, 4, 6, 5, 7, 1, 3});
     setVertices({glm::vec3(-1, -1, -1), glm::vec3(-1, -1, 1),
                  glm::vec3(-1, 1, -1), glm::vec3(-1, 1, 1),
                  glm::vec3(1, -1, -1), glm::vec3(1, -1, 1), glm::vec3(1, 1, -1),
                  glm::vec3(1, 1, 1)});
 }
 
-void CuboidRenderer::render(glm::mat4 const &modelMatrix) {
+void CuboidRenderer::render(glm::vec3 colour, glm::mat4 const &modelMatrix) {
     setModelMatrix(modelMatrix);
+    setColour(colour);
     draw(GL_TRIANGLE_STRIP, 0, 8);
     draw(GL_TRIANGLE_STRIP, 8, 8);
 }
