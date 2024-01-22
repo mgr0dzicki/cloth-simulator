@@ -67,9 +67,9 @@ void Node::constrainBall(glm::vec3 center, float radius) {
     glm::vec3 diff = position - center;
     float len = glm::length(diff);
     if (len < radius) {
-        // position += diff * (radius - len) / len;
-        // prevPosition = position;
-        position = prevPosition;
+        position += diff * (radius - len) / len;
+        prevPosition = position;
+        // position = prevPosition;
     }
 }
 
@@ -149,7 +149,7 @@ void Cloth::reset() {
     }
 }
 
-void Cloth::update(float dt, float prevDt) {
+void Cloth::update(float dt, float prevDt, std::vector<Solid*> const &solids) {
     for (auto &line : nodes)
         for (auto &node : line)
             node.update(dt, prevDt);
@@ -170,6 +170,11 @@ void Cloth::update(float dt, float prevDt) {
         for (auto &line : nodes)
             for (auto &node : line)
                 node.constrainBall(glm::vec3(0, 0, 2), 1.0);
+
+        for (auto solid : solids)
+            for (auto &line : nodes)
+                for (auto &node : line)
+                    solid->constrain(node);
 
         if (settings.clothClothCollision) {
             for (int i = 0; i < static_cast<int>(nodes.size()); i++) {

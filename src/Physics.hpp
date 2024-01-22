@@ -57,7 +57,7 @@ class Cloth {
           glm::vec3 nodesColour, glm::vec3 linksColour, glm::vec3 frontColour,
           glm::vec3 backColour, TrianglesShaderProgram &trianglesShaderProgram,
           PointsAndLinesShaderProgram &pointsAndLinesShaderProgram);
-    void update(float dt, float prevDt);
+    void update(float dt, float prevDt, std::vector<Solid *> const &solid);
     void draw();
     void reset();
 

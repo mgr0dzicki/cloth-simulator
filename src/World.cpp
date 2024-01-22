@@ -32,7 +32,7 @@ void World::reset() {
 }
 
 void World::update(float dt, float prevDt) {
-    cloth->update(dt, prevDt);
+    cloth->update(dt, prevDt, solids);
 }
 
 void World::draw() {
