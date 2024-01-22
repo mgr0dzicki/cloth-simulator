@@ -107,3 +107,9 @@ void MyApplication::onMouseMove(double x, double y) {
         view = glm::lookAt(cameraPosition, glm::vec3(0.0, 0.0, 0.0), up);
     }
 }
+
+void MyApplication::onScroll(double x, double y) {
+    cameraPosition *= 1.0 - y / 20.0;
+    view = glm::lookAt(cameraPosition, glm::vec3(0.0, 0.0, 0.0),
+                       glm::vec3(0.0, 0.0, 1.0));
+}

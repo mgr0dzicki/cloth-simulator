@@ -44,6 +44,7 @@ class MyApplication : public Application {
     void onMouseButton(int button, int action, int mods, double x,
                        double y) override;
     void onMouseMove(double x, double y) override;
+    void onScroll(double x, double y) override;
 };
 
 #endif // MYAPPLICATION_HPP

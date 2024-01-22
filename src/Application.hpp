@@ -72,6 +72,7 @@ class Application {
     // Callbacks:
     static void glfwCursorPosCallback(GLFWwindow *window, double x, double y);
     static void glfwMouseButtonCallback(GLFWwindow *window, int button, int action, int mods);
+    static void glfwScrollCallback(GLFWwindow *window, double x, double y);
 
   protected:
     Application(const Application &){};
@@ -81,6 +82,7 @@ class Application {
     virtual void loop();
     virtual void onMouseButton(int button, int action, int mods, double x, double y) {};
     virtual void onMouseMove(double x, double y) {};
+    virtual void onScroll(double x, double y) {};
 };
 
 #endif // APPLICATION_HPP

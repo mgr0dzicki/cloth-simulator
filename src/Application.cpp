@@ -79,6 +79,7 @@ Application::Application(std::string title)
     // mouse callbacks
     glfwSetCursorPosCallback(window, glfwCursorPosCallback);
     glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
+    glfwSetScrollCallback(window, glfwScrollCallback);
 
     // vsync
     glfwSwapInterval(false);
@@ -195,4 +196,8 @@ void Application::glfwMouseButtonCallback(GLFWwindow *window, int button,
     double x, y;
     glfwGetCursorPos(window, &x, &y);
     Application::getInstance().onMouseButton(button, action, mods, x, y);
+}
+
+void Application::glfwScrollCallback(GLFWwindow *window, double x, double y) {
+    Application::getInstance().onScroll(x, y);
 }
