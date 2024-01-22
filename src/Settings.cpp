@@ -6,6 +6,10 @@ Settings::Settings() {
     setRecommended();
 }
 
+int Settings::subdividedMeshSize() {
+    return meshSize * (1 << subdivisionSteps) + 1;
+}
+
 void Settings::setRecommended() {
     regularLinks = true;
     diagonalLinks = true;
@@ -13,11 +17,18 @@ void Settings::setRecommended() {
     clothClothCollision = true;
     renderMode = RenderMode::Triangles;
 
-    if (subdivisionSteps != Cloth::SUBDIVISION_STEPS_MAX) {
-        subdivisionSteps = Cloth::SUBDIVISION_STEPS_MAX;
+    if (subdivisionSteps != MAX_SUBDIVISION_STEPS) {
+        subdivisionSteps = MAX_SUBDIVISION_STEPS;
         subdivisionStepsCallback();
     } else {
-        subdivisionSteps = Cloth::SUBDIVISION_STEPS_MAX;
+        subdivisionSteps = MAX_SUBDIVISION_STEPS;
+    }
+
+    if (meshSize != RECOMMENDED_MESH_SIZE) {
+        meshSize = RECOMMENDED_MESH_SIZE;
+        resetCallback();
+    } else {
+        meshSize = RECOMMENDED_MESH_SIZE;
     }
 }
 
@@ -28,11 +39,18 @@ void Settings::setAllDisabled() {
     clothClothCollision = false;
     renderMode = RenderMode::Points;
 
-    if (subdivisionSteps != 0) {
-        subdivisionSteps = 0;
+    if (subdivisionSteps != MIN_SUBDIVISION_STEPS) {
+        subdivisionSteps = MIN_SUBDIVISION_STEPS;
         subdivisionStepsCallback();
     } else {
-        subdivisionSteps = 0;
+        subdivisionSteps = MIN_SUBDIVISION_STEPS;
+    }
+
+    if (meshSize != MIN_MESH_SIZE) {
+        meshSize = MIN_MESH_SIZE;
+        resetCallback();
+    } else {
+        meshSize = MIN_MESH_SIZE;
     }
 }
 

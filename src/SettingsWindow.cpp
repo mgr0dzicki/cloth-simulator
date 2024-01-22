@@ -24,6 +24,10 @@ void drawSettingsWindow(float dt) {
 
     ImGui::Separator();
 
+    if (ImGui::SliderInt("Mesh size", &settings.meshSize,
+                         Settings::MIN_MESH_SIZE, Settings::MAX_MESH_SIZE))
+        settings.resetCallback();
+
     ImGui::Text("Render mode");
     ImGui::RadioButton("Points", (int *)&settings.renderMode,
                        (int)Settings::RenderMode::Points);
@@ -36,8 +40,9 @@ void drawSettingsWindow(float dt) {
     ImGui::Spacing();
 
     if (settings.renderMode == Settings::RenderMode::Triangles) {
-        if (ImGui::SliderInt("Subdivision steps", &settings.subdivisionSteps, 0,
-                             Cloth::SUBDIVISION_STEPS_MAX))
+        if (ImGui::SliderInt("Subdivision steps", &settings.subdivisionSteps,
+                             Settings::MIN_SUBDIVISION_STEPS,
+                             Settings::MAX_SUBDIVISION_STEPS))
             settings.subdivisionStepsCallback();
         ImGui::Spacing();
     }

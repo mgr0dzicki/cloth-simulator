@@ -81,7 +81,7 @@ Application::Application(std::string title)
     glfwSetMouseButtonCallback(window, glfwMouseButtonCallback);
 
     // vsync
-    // glfwSwapInterval(false);
+    glfwSwapInterval(false);
 
     // Setup Dear ImGui context
     IMGUI_CHECKVERSION();

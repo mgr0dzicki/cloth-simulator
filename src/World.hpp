@@ -14,6 +14,8 @@ class World {
   private:
     Cloth *cloth;
     std::vector<Solid *> solids;
+    TrianglesShaderProgram &trianglesShaderProgram;
+    PointsAndLinesShaderProgram &pointsAndLinesShaderProgram;
 };
 
 #endif // WORLD_HPP

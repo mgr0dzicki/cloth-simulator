@@ -2,8 +2,8 @@
 #define SETTINGS_HPP
 
 #include "Physics.hpp"
-#include <glm/glm.hpp>
 #include <functional>
+#include <glm/glm.hpp>
 #include <vector>
 
 class Settings {
@@ -15,8 +15,18 @@ class Settings {
     bool diagonalLinks;
     bool farLinks;
     bool clothClothCollision;
-    int subdivisionSteps;
     bool frozen = false;
+
+    int subdivisionSteps;
+    static constexpr int MIN_SUBDIVISION_STEPS = 0;
+    static constexpr int MAX_SUBDIVISION_STEPS = 3;
+
+    int meshSize;
+    static constexpr int MIN_MESH_SIZE = 20;
+    static constexpr int RECOMMENDED_MESH_SIZE = 30;
+    static constexpr int MAX_MESH_SIZE = 50;
+
+    int subdividedMeshSize();
 
     Settings();
 

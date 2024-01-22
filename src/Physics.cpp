@@ -30,8 +30,8 @@ void Cuboid::draw() {
 void Cuboid::constrain(Node &node) {
     static const float eps = 0.03F;
     auto pos = node.position;
-    if (pos.x < a.x - eps || pos.x > b.x + eps || pos.y < a.y - eps || pos.y > b.y + eps ||
-        pos.z < a.z - eps || pos.z > b.z + eps)
+    if (pos.x < a.x - eps || pos.x > b.x + eps || pos.y < a.y - eps ||
+        pos.y > b.y + eps || pos.z < a.z - eps || pos.z > b.z + eps)
         return;
 
     auto candidates = {
@@ -72,13 +72,12 @@ void Node::update(float dt, float prevDt) { // TODO: sprobowac zalozyc dt=prevDt
     prevPosition = tmp;
 }
 
-void Node::collide(Node &other) {
+void Node::collide(Node &other, float radius) {
     glm::vec3 diff = position - other.position;
-    float length = 0.4F; // TODO: uzaleznic od rozmiaru siatki!!!!
     float currLen = glm::length(diff);
-    if (currLen > length)
+    if (currLen > radius)
         return;
-    float perc = (currLen - length) / currLen * 0.4F;
+    float perc = (currLen - radius) / currLen * 0.4F;
     glm::vec3 off = diff * perc;
     position -= off;
     other.position += off;
@@ -108,67 +107,51 @@ void Link::update() {
     b->position += off;
 }
 
-Cloth::Cloth(glm::vec3 pos, glm::vec3 _dx, glm::vec3 _dy, int width, int height,
-             glm::vec3 nodesColour, glm::vec3 linksColour,
-             glm::vec3 frontColour, glm::vec3 backColour,
+Cloth::Cloth(glm::vec3 pos, glm::vec3 _dx, glm::vec3 _dy, glm::vec3 nodesColour,
+             glm::vec3 linksColour, glm::vec3 frontColour, glm::vec3 backColour,
              TrianglesShaderProgram &trianglesShaderProgram,
              PointsAndLinesShaderProgram &pointsAndLinesShaderProgram)
-    : pos(pos), dx(_dx / static_cast<float>(width)),
-      dy(_dy / static_cast<float>(height)),
-      clothRenderer(SUBDIVISION_MESH_SIZE_MAX, SUBDIVISION_MESH_SIZE_MAX,
-                    frontColour, backColour, trianglesShaderProgram),
-      meshRenderer(height + 1, width + 1, nodesColour, linksColour,
-                   pointsAndLinesShaderProgram) {
-    nodes.resize(height + 1);
-    for (int y = 0; y <= height; ++y) {
-        for (int x = 0; x <= width; ++x) {
+    : pos(pos), dx(_dx / static_cast<float>(settings.meshSize)),
+      dy(_dy / static_cast<float>(settings.meshSize)),
+      clothRenderer(settings.subdividedMeshSize(),
+                    settings.subdividedMeshSize(), frontColour, backColour,
+                    trianglesShaderProgram),
+      meshRenderer(settings.subdividedMeshSize(), settings.subdividedMeshSize(),
+                   nodesColour, linksColour, pointsAndLinesShaderProgram) {
+    nodes.resize(settings.meshSize + 1);
+    for (int y = 0; y <= settings.meshSize; ++y) {
+        for (int x = 0; x <= settings.meshSize; ++x) {
             glm::vec3 xx = dx * static_cast<float>(x);
             glm::vec3 yy = dy * static_cast<float>(y);
             nodes[y].emplace_back(pos + xx + yy);
         }
     }
 
-    for (int y = 0; y <= height; ++y) {
-        for (int x = 0; x <= width; ++x) {
-            if (x < width)
+    for (int y = 0; y <= settings.meshSize; ++y) {
+        for (int x = 0; x <= settings.meshSize; ++x) {
+            if (x < settings.meshSize)
                 regularLinks.push_back(Link(&nodes[y][x], &nodes[y][x + 1]));
-            if (y < height)
+            if (y < settings.meshSize)
                 regularLinks.push_back(Link(&nodes[y][x], &nodes[y + 1][x]));
-            if (x < width && y < height) {
+            if (x < settings.meshSize && y < settings.meshSize) {
                 diagonalLinks.push_back(
                     Link(&nodes[y][x], &nodes[y + 1][x + 1]));
                 diagonalLinks.push_back(
                     Link(&nodes[y][x + 1], &nodes[y + 1][x]));
             }
-            if (x < width - 1)
+            if (x < settings.meshSize - 1)
                 farLinks.push_back(Link(&nodes[y][x], &nodes[y][x + 2]));
-            if (y < height - 1)
+            if (y < settings.meshSize - 1)
                 farLinks.push_back(Link(&nodes[y][x], &nodes[y + 2][x]));
         }
     }
 
     settings.registerSubdivisionStepsCallback(
         [this, frontColour, backColour, &trianglesShaderProgram]() {
-            int n = nodes.size();
-            int m = nodes[0].size();
-            for (int i = 0; i < settings.subdivisionSteps; i++) {
-                n = n * 2 - 1;
-                m = m * 2 - 1;
-            }
-            clothRenderer = ClothRenderer(n, m, frontColour, backColour,
-                                          trianglesShaderProgram);
+            clothRenderer = ClothRenderer(
+                settings.subdividedMeshSize(), settings.subdividedMeshSize(),
+                frontColour, backColour, trianglesShaderProgram);
         });
-}
-
-void Cloth::reset() {
-    for (size_t y = 0; y < nodes.size(); ++y) {
-        for (size_t x = 0; x < nodes[y].size(); ++x) {
-            glm::vec3 xx = dx * static_cast<float>(x);
-            glm::vec3 yy = dy * static_cast<float>(y);
-            nodes[y][x].position = pos + xx + yy;
-            nodes[y][x].prevPosition = nodes[y][x].position;
-        }
-    }
 }
 
 void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
@@ -199,13 +182,15 @@ void Cloth::update(float dt, float prevDt, std::vector<Solid *> const &solids) {
                     solid->constrain(node);
 
         if (settings.clothClothCollision) {
+            float radius = std::min(glm::length(dx), glm::length(dy)) * 1.2F;
+
             for (int i = 0; i < static_cast<int>(nodes.size()); i++) {
                 for (int j = 0; j < static_cast<int>(nodes[i].size()); j++) {
                     for (int k = 0; k < static_cast<int>(nodes.size()); k++) {
                         for (int l = 0; l < static_cast<int>(nodes[k].size());
                              l++) {
                             if (abs(i - k) > 1 || abs(j - l) > 1)
-                                nodes[i][j].collide(nodes[k][l]);
+                                nodes[i][j].collide(nodes[k][l], radius);
                         }
                     }
                 }

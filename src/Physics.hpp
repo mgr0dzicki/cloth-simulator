@@ -11,7 +11,7 @@ class Node {
     Node(glm::vec3 position, glm::vec3 velocity = glm::vec3(0.0));
     void update(float dt, float prevDt);
     void constrainBall(glm::vec3 center, float radius);
-    void collide(Node &other);
+    void collide(Node &other, float radius);
 
     glm::vec3 position;
     glm::vec3 prevPosition;
@@ -53,15 +53,12 @@ class Link {
 
 class Cloth {
   public:
-    Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, int width, int height,
-          glm::vec3 nodesColour, glm::vec3 linksColour, glm::vec3 frontColour,
-          glm::vec3 backColour, TrianglesShaderProgram &trianglesShaderProgram,
+    Cloth(glm::vec3 pos, glm::vec3 dx, glm::vec3 dy, glm::vec3 nodesColour,
+          glm::vec3 linksColour, glm::vec3 frontColour, glm::vec3 backColour,
+          TrianglesShaderProgram &trianglesShaderProgram,
           PointsAndLinesShaderProgram &pointsAndLinesShaderProgram);
     void update(float dt, float prevDt, std::vector<Solid *> const &solid);
     void draw();
-    void reset();
-
-    constexpr static int SUBDIVISION_STEPS_MAX = 3;
 
   private:
     glm::vec3 pos, dx, dy;
@@ -69,8 +66,6 @@ class Cloth {
     std::vector<Link> regularLinks, diagonalLinks, farLinks;
     ClothRenderer clothRenderer;
     MeshRenderer meshRenderer;
-
-    constexpr static int SUBDIVISION_MESH_SIZE_MAX = 241;
 };
 
 #endif // PHYSICS_HPP
